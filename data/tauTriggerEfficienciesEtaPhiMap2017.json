@@ -1,0 +1,62 @@
+{
+    "diTau" : {
+        "medium" : {
+            "Average" : 0.8935,
+            "NonPixelProblemBarrel" : 0.8983,
+            "EndCap" : 0.8938,
+            "PixelProblemBarrel" : 0.6143
+        },
+        "tight" : {
+            "Average" : 0.9042,
+            "NonPixelProblemBarrel" : 0.9094,
+            "EndCap" : 0.8977,
+            "PixelProblemBarrel" : 0.6500
+        },
+        "vtight" : {
+            "Average" : 0.9129,
+            "NonPixelProblemBarrel" : 0.9155,
+            "EndCap" : 0.9494,
+            "PixelProblemBarrel" : 0.5477
+        }
+    },
+    "eTau" : {
+        "medium" : {
+            "Average" : 0.8729,
+            "NonPixelProblemBarrel" : 0.8815,
+            "EndCap" : 0.8373,
+            "PixelProblemBarrel" : 0.7606
+        },
+        "tight" : {
+            "Average" : 0.8806,
+            "NonPixelProblemBarrel" : 0.8913,
+            "EndCap" : 0.8339,
+            "PixelProblemBarrel" : 0.7655
+        },
+        "vtight" : {
+            "Average" : 0.8878,
+            "NonPixelProblemBarrel" : 0.8993,
+            "EndCap" : 0.8447,
+            "PixelProblemBarrel" : 0.6931
+        }
+    },
+    "muTau" : {
+        "medium" : {
+            "Average" : 0.8808,
+            "NonPixelProblemBarrel" : 0.8855,
+            "EndCap" : 0.8643,
+            "PixelProblemBarrel" : 0.7818
+        },
+        "tight" : {
+            "Average" : 0.8908,
+            "NonPixelProblemBarrel" : 0.8980,
+            "EndCap" : 0.8636,
+            "PixelProblemBarrel" : 0.7727
+        },
+        "vtight" : {
+            "Average" : 0.8938,
+            "NonPixelProblemBarrel" : 0.8998,
+            "EndCap" : 0.8753,
+            "PixelProblemBarrel" : 0.7441
+        }
+    }
+}
