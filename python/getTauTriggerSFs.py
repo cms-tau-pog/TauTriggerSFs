@@ -42,8 +42,11 @@ class getTauTriggerSFs :
         elif pt < 20 : pt = 21
         effData = self.diTauData.GetBinContent( self.diTauData.FindBin( pt ) )
         effMC = self.diTauMC.GetBinContent( self.diTauMC.FindBin( pt ) )
-        if effMC <= 0.0 : print "Eff MC too low. Value is ",effMC," this is a problem"
-        sf = effData / max(effMC, 1e-5)
+        if effMC < 1e-5 :
+            print "Eff MC is suspiciously low. Please contact Tau POG."
+            print " - DiTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - MC Efficiency = %f" % effMC
+        sf = effData / effMC
 
         # Adjust SF based on (eta, phi) location
         sf *= self.getEtaPhiSF( eta, phi, 'diTau' )
@@ -56,8 +59,11 @@ class getTauTriggerSFs :
         elif pt < 20 : pt = 21
         effData = self.eTauData.GetBinContent( self.eTauData.FindBin( pt ) )
         effMC = self.eTauMC.GetBinContent( self.eTauMC.FindBin( pt ) )
-        if effMC <= 0.0 : print "Eff MC too low. Value is ",effMC," this is a problem"
-        sf = effData / max(effMC, 1e-5)
+        if effMC < 1e-5 :
+            print "Eff MC is suspiciously low. Please contact Tau POG."
+            print " - ETau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - MC Efficiency = %f" % effMC
+        sf = effData / effMC
 
         # Adjust SF based on (eta, phi) location
         sf *= self.getEtaPhiSF( eta, phi, 'eTau' )
@@ -70,8 +76,11 @@ class getTauTriggerSFs :
         elif pt < 20 : pt = 21
         effData = self.muTauData.GetBinContent( self.muTauData.FindBin( pt ) )
         effMC = self.muTauMC.GetBinContent( self.muTauMC.FindBin( pt ) )
-        if effMC <= 0.0 : print "Eff MC too low. Value is ",effMC," this is a problem"
-        sf = effData / max(effMC, 1e-5)
+        if effMC < 1e-5 :
+            print "Eff MC is suspiciously low. Please contact Tau POG."
+            print " - MuTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - MC Efficiency = %f" % effMC
+        sf = effData / effMC
 
         # Adjust SF based on (eta, phi) location
         sf *= self.getEtaPhiSF( eta, phi, 'muTau' )
@@ -87,3 +96,4 @@ class getTauTriggerSFs :
             return self.etaPhiMap[ trigger ][ self.tauMVAWP ][ "NonPixelProblemBarrel" ] / avg
         
         
+
