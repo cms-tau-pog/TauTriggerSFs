@@ -16,7 +16,7 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
       * HLT_MediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1
       * HLT_TightChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1
 
-The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2017 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2518281/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
+The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2017 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
 
 # Accessing the Efficiencies and SFs
 
