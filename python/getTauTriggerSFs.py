@@ -59,20 +59,30 @@ class getTauTriggerSFs :
         eff = effHist.GetBinContent( effHist.FindBin( pt ) )
 
         # Adjust SF based on (eta, phi) location
+        # keep eta barrel boundaries within SF region
+        # but, for taus outside eta limits or with unralistic
+        # phi values, return zero SF
+        if eta == 2.1 : eta = 2.09
+        elif eta == -2.1 : eta = -2.09
+
         etaPhiVal = etaPhi.GetBinContent( etaPhi.FindBin( eta, phi ) )
         etaPhiAvg = etaPhiAvg.GetBinContent( etaPhiAvg.FindBin( eta, phi ) )
+        if etaPhiAvg <= 0.0 :
+            print "One of the provided tau (eta, phi) values (%3.3f, %3.3f) is outside the boundary of triggering taus" % (eta, phi)
+            print "Returning efficiency = 0.0"
+            return 0.0
         eff *= etaPhiVal / etaPhiAvg
         return eff
 
 
     # This is the efficiency for a single leg of the di-tau trigger
     def getDiTauEfficiencyData( self, pt, eta, phi ) :
-        return getEfficiency( pt, eta, phi, self.diTauData, self.diTauEtaPhiData, self.diTauEtaPhiAvgData )
+        return self.getEfficiency( pt, eta, phi, self.diTauData, self.diTauEtaPhiData, self.diTauEtaPhiAvgData )
 
 
     # This is the efficiency for a single leg of the di-tau trigger
     def getDiTauEfficiencyMC( self, pt, eta, phi ) :
-        return getEfficiency( pt, eta, phi, self.diTauMC, self.diTauEtaPhiMC, self.diTauEtaPhiAvgMC )
+        return self.getEfficiency( pt, eta, phi, self.diTauMC, self.diTauEtaPhiMC, self.diTauEtaPhiAvgMC )
 
 
     # This is the SF for a single leg of the di-tau trigger
@@ -84,18 +94,19 @@ class getTauTriggerSFs :
             print "Eff MC is suspiciously low. Please contact Tau POG."
             print " - DiTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
+            return 0.0
         sf = effData / effMC
         return sf
 
 
     # This is the efficiency for the tau leg of the mu-tau trigger
     def getMuTauEfficiencyData( self, pt, eta, phi ) :
-        return getEfficiency( pt, eta, phi, self.muTauData, self.muTauEtaPhiData, self.muTauEtaPhiAvgData )
+        return self.getEfficiency( pt, eta, phi, self.muTauData, self.muTauEtaPhiData, self.muTauEtaPhiAvgData )
 
 
     # This is the efficiency for the tau leg of the mu-tau trigger
     def getMuTauEfficiencyMC( self, pt, eta, phi ) :
-        return getEfficiency( pt, eta, phi, self.muTauMC, self.muTauEtaPhiMC, self.muTauEtaPhiAvgMC )
+        return self.getEfficiency( pt, eta, phi, self.muTauMC, self.muTauEtaPhiMC, self.muTauEtaPhiAvgMC )
 
 
     # This is the SF for the tau leg of the mu-tau trigger
@@ -107,6 +118,7 @@ class getTauTriggerSFs :
             print "Eff MC is suspiciously low. Please contact Tau POG."
             print " - MuTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
+            return 0.0
         sf = effData / effMC
         return sf
 
@@ -114,12 +126,12 @@ class getTauTriggerSFs :
 
     # This is the efficiency for the tau leg of the e-tau trigger
     def getETauEfficiencyData( self, pt, eta, phi ) :
-        return getEfficiency( pt, eta, phi, self.eTauData, self.eTauEtaPhiData, self.eTauEtaPhiAvgData )
+        return self.getEfficiency( pt, eta, phi, self.eTauData, self.eTauEtaPhiData, self.eTauEtaPhiAvgData )
 
 
     # This is the efficiency for the tau leg of the e-tau trigger
     def getETauEfficiencyMC( self, pt, eta, phi ) :
-        return getEfficiency( pt, eta, phi, self.eTauMC, self.eTauEtaPhiMC, self.eTauEtaPhiAvgMC )
+        return self.getEfficiency( pt, eta, phi, self.eTauMC, self.eTauEtaPhiMC, self.eTauEtaPhiAvgMC )
 
 
     # This is the SF for the tau leg of the e-tau trigger
@@ -131,9 +143,10 @@ class getTauTriggerSFs :
             print "Eff MC is suspiciously low. Please contact Tau POG."
             print " - ETau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
+            return 0.0
         sf = effData / effMC
         return sf
 
-        
-        
+
+
 

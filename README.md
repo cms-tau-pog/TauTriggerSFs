@@ -27,6 +27,14 @@ This class has three methods to return the trigger SF for each of the trigger gr
    * getETauScaleFactor( pt, eta, phi )
    * getMuTauScaleFactor( pt, eta, phi )
 
+Additionally, if one needs the trigger efficiencies and not the SFs you can grab them as well. The trigger efficiencies will have the eta-phi adjustment already applied to them.
+   * getDiTauEfficiencyData( pt, eta, phi )
+   * getDiTauEfficiencyMC( pt, eta, phi )
+   * getETauEfficiencyData( pt, eta, phi )
+   * getETauEfficiencyMC( pt, eta, phi )
+   * getMuTauEfficiencyData( pt, eta, phi )
+   * getMuTauEfficiencyMC( pt, eta, phi )
+
 There are currently no fits applied in this Git area. Fits will be considered for the final round of trigger SFs. Currently, "getTauTriggerSFs" fetches the efficiency of Data and MC from the associated bin value in TGraphAsymmErrors turned into TH1s for simplicity of access.
 
 It is found that there is a slight barrel vs. end cap difference in tau trigger performance. To account for this, there are additional eta-phi adjustments made to the delivered SFs from "getTauTriggerSFs". In additional to the barrel / end cap separation, we isolate a specific region in the barrel which had well known issues with deal pixel modules and varying tau reconstruction during 2017 data taking (0 < eta < 1.5, phi > 2.8). The eta-phi adjustements are provided in a json file: data/tauTriggerEfficienciesEtaPhiMap2017.json and are applied by default in "getTauTriggerSFs".
