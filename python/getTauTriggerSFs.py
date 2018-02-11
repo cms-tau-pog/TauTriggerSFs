@@ -10,7 +10,6 @@ T. Ruggles
 
 
 import ROOT
-import json
 
 class getTauTriggerSFs :
     
@@ -31,69 +30,110 @@ class getTauTriggerSFs :
         self.muTauData = self.f.Get('hist_MuTauTriggerEfficiency_%sTauMVA_DATA' % self.tauMVAWP )
         self.muTauMC = self.f.Get('hist_MuTauTriggerEfficiency_%sTauMVA_MC' % self.tauMVAWP )
         
-        with open('data/tauTriggerEfficienciesEtaPhiMap2017.json') as etaPhiSFs :
-            self.etaPhiMap = json.load( etaPhiSFs )
+        # Load the TH2s containing the eta phi efficiency corrections
+        self.f_etaphi = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2017.root', 'r' )
+        self.diTauEtaPhiData = self.f_etaphi.Get('diTau_%s_DATA' % self.tauMVAWP )
+        self.diTauEtaPhiMC = self.f_etaphi.Get('diTau_%s_MC' % self.tauMVAWP )
+        self.eTauEtaPhiData = self.f_etaphi.Get('eTau_%s_DATA' % self.tauMVAWP )
+        self.eTauEtaPhiMC = self.f_etaphi.Get('eTau_%s_MC' % self.tauMVAWP )
+        self.muTauEtaPhiData = self.f_etaphi.Get('muTau_%s_DATA' % self.tauMVAWP )
+        self.muTauEtaPhiMC = self.f_etaphi.Get('muTau_%s_MC' % self.tauMVAWP )
+
+        # Eta Phi Avg
+        self.diTauEtaPhiAvgData = self.f_etaphi.Get('diTau_%s_AVG_DATA' % self.tauMVAWP )
+        self.diTauEtaPhiAvgMC = self.f_etaphi.Get('diTau_%s_AVG_MC' % self.tauMVAWP )
+        self.eTauEtaPhiAvgData = self.f_etaphi.Get('eTau_%s_AVG_DATA' % self.tauMVAWP )
+        self.eTauEtaPhiAvgMC = self.f_etaphi.Get('eTau_%s_AVG_MC' % self.tauMVAWP )
+        self.muTauEtaPhiAvgData = self.f_etaphi.Get('muTau_%s_AVG_DATA' % self.tauMVAWP )
+        self.muTauEtaPhiAvgMC = self.f_etaphi.Get('muTau_%s_AVG_MC' % self.tauMVAWP )
+
+
+    # Make sure we stay on our histograms
+    def ptCheck( self, pt ) :
+        if pt > 499 : pt = 499
+        elif pt < 20 : pt = 21
+        return pt
+
+    def getEfficiency( self, pt, eta, phi, effHist, etaPhi, etaPhiAvg ) :
+        pt = self.ptCheck( pt )
+        eff = effHist.GetBinContent( effHist.FindBin( pt ) )
+
+        # Adjust SF based on (eta, phi) location
+        etaPhiVal = etaPhi.GetBinContent( etaPhi.FindBin( eta, phi ) )
+        etaPhiAvg = etaPhiAvg.GetBinContent( etaPhiAvg.FindBin( eta, phi ) )
+        eff *= etaPhiVal / etaPhiAvg
+        return eff
+
+
+    # This is the efficiency for a single leg of the di-tau trigger
+    def getDiTauEfficiencyData( self, pt, eta, phi ) :
+        return getEfficiency( pt, eta, phi, self.diTauData, self.diTauEtaPhiData, self.diTauEtaPhiAvgData )
+
+
+    # This is the efficiency for a single leg of the di-tau trigger
+    def getDiTauEfficiencyMC( self, pt, eta, phi ) :
+        return getEfficiency( pt, eta, phi, self.diTauMC, self.diTauEtaPhiMC, self.diTauEtaPhiAvgMC )
 
 
     # This is the SF for a single leg of the di-tau trigger
     def getDiTauScaleFactor( self, pt, eta, phi ) :
-        # Make sure we stay on our histograms
-        if pt > 499 : pt = 499
-        elif pt < 20 : pt = 21
-        effData = self.diTauData.GetBinContent( self.diTauData.FindBin( pt ) )
-        effMC = self.diTauMC.GetBinContent( self.diTauMC.FindBin( pt ) )
+        pt = self.ptCheck( pt )
+        effData = self.getDiTauEfficiencyData( pt, eta, phi )
+        effMC = self.getDiTauEfficiencyMC( pt, eta, phi )
         if effMC < 1e-5 :
             print "Eff MC is suspiciously low. Please contact Tau POG."
             print " - DiTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
         sf = effData / effMC
-
-        # Adjust SF based on (eta, phi) location
-        sf *= self.getEtaPhiSF( eta, phi, 'diTau' )
         return sf
 
-    # This is the SF for the tau leg of the e-tau trigger
-    def getETauScaleFactor( self, pt, eta, phi ) :
-        # Make sure we stay on our histograms
-        if pt > 499 : pt = 499
-        elif pt < 20 : pt = 21
-        effData = self.eTauData.GetBinContent( self.eTauData.FindBin( pt ) )
-        effMC = self.eTauMC.GetBinContent( self.eTauMC.FindBin( pt ) )
-        if effMC < 1e-5 :
-            print "Eff MC is suspiciously low. Please contact Tau POG."
-            print " - ETau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
-            print " - MC Efficiency = %f" % effMC
-        sf = effData / effMC
 
-        # Adjust SF based on (eta, phi) location
-        sf *= self.getEtaPhiSF( eta, phi, 'eTau' )
-        return sf
+    # This is the efficiency for the tau leg of the mu-tau trigger
+    def getMuTauEfficiencyData( self, pt, eta, phi ) :
+        return getEfficiency( pt, eta, phi, self.muTauData, self.muTauEtaPhiData, self.muTauEtaPhiAvgData )
+
+
+    # This is the efficiency for the tau leg of the mu-tau trigger
+    def getMuTauEfficiencyMC( self, pt, eta, phi ) :
+        return getEfficiency( pt, eta, phi, self.muTauMC, self.muTauEtaPhiMC, self.muTauEtaPhiAvgMC )
+
 
     # This is the SF for the tau leg of the mu-tau trigger
     def getMuTauScaleFactor( self, pt, eta, phi ) :
-        # Make sure we stay on our histograms
-        if pt > 499 : pt = 499
-        elif pt < 20 : pt = 21
-        effData = self.muTauData.GetBinContent( self.muTauData.FindBin( pt ) )
-        effMC = self.muTauMC.GetBinContent( self.muTauMC.FindBin( pt ) )
+        pt = self.ptCheck( pt )
+        effData = self.getMuTauEfficiencyData( pt, eta, phi )
+        effMC = self.getMuTauEfficiencyMC( pt, eta, phi )
         if effMC < 1e-5 :
             print "Eff MC is suspiciously low. Please contact Tau POG."
             print " - MuTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
         sf = effData / effMC
-
-        # Adjust SF based on (eta, phi) location
-        sf *= self.getEtaPhiSF( eta, phi, 'muTau' )
         return sf
 
-    def getEtaPhiSF( self, eta, phi, trigger ) :
-        avg = self.etaPhiMap[ trigger ][ self.tauMVAWP ][ "Average" ]
-        if abs(eta) > 1.479 : # End cap
-            return self.etaPhiMap[ trigger ][ self.tauMVAWP ][ "EndCap" ] / avg
-        if eta > 0 and phi > 2.8 : # Dead pixel module region
-            return self.etaPhiMap[ trigger ][ self.tauMVAWP ][ "PixelProblemBarrel" ] / avg
-        else : # Rest of Barrel
-            return self.etaPhiMap[ trigger ][ self.tauMVAWP ][ "NonPixelProblemBarrel" ] / avg
+
+
+    # This is the efficiency for the tau leg of the e-tau trigger
+    def getETauEfficiencyData( self, pt, eta, phi ) :
+        return getEfficiency( pt, eta, phi, self.eTauData, self.eTauEtaPhiData, self.eTauEtaPhiAvgData )
+
+
+    # This is the efficiency for the tau leg of the e-tau trigger
+    def getETauEfficiencyMC( self, pt, eta, phi ) :
+        return getEfficiency( pt, eta, phi, self.eTauMC, self.eTauEtaPhiMC, self.eTauEtaPhiAvgMC )
+
+
+    # This is the SF for the tau leg of the e-tau trigger
+    def getETauScaleFactor( self, pt, eta, phi ) :
+        pt = self.ptCheck( pt )
+        effData = self.getETauEfficiencyData( pt, eta, phi )
+        effMC = self.getETauEfficiencyMC( pt, eta, phi )
+        if effMC < 1e-5 :
+            print "Eff MC is suspiciously low. Please contact Tau POG."
+            print " - ETau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - MC Efficiency = %f" % effMC
+        sf = effData / effMC
+        return sf
+
         
         
 
