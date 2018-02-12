@@ -4,7 +4,7 @@ For the current best tau trigger scale factors for 2017 data and MC do (this is 
 ```
 git clone -b tauTriggers2017_MCv2_PreReMiniaod git@github.com:truggles/TauTriggerSFs2017.git
 ```
-There is no code to compile
+The c++ interface require you to scram b after checkout.
 
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
 
