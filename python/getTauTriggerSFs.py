@@ -31,21 +31,20 @@ class getTauTriggerSFs :
         self.muTauMC = self.f.Get('hist_MuTauTriggerEfficiency_%sTauMVA_MC' % self.tauMVAWP )
         
         # Load the TH2s containing the eta phi efficiency corrections
-        self.f_etaphi = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2017.root', 'r' )
-        self.diTauEtaPhiData = self.f_etaphi.Get('diTau_%s_DATA' % self.tauMVAWP )
-        self.diTauEtaPhiMC = self.f_etaphi.Get('diTau_%s_MC' % self.tauMVAWP )
-        self.eTauEtaPhiData = self.f_etaphi.Get('eTau_%s_DATA' % self.tauMVAWP )
-        self.eTauEtaPhiMC = self.f_etaphi.Get('eTau_%s_MC' % self.tauMVAWP )
-        self.muTauEtaPhiData = self.f_etaphi.Get('muTau_%s_DATA' % self.tauMVAWP )
-        self.muTauEtaPhiMC = self.f_etaphi.Get('muTau_%s_MC' % self.tauMVAWP )
+        self.diTauEtaPhiData = self.f.Get('diTau_%s_DATA' % self.tauMVAWP )
+        self.diTauEtaPhiMC = self.f.Get('diTau_%s_MC' % self.tauMVAWP )
+        self.eTauEtaPhiData = self.f.Get('eTau_%s_DATA' % self.tauMVAWP )
+        self.eTauEtaPhiMC = self.f.Get('eTau_%s_MC' % self.tauMVAWP )
+        self.muTauEtaPhiData = self.f.Get('muTau_%s_DATA' % self.tauMVAWP )
+        self.muTauEtaPhiMC = self.f.Get('muTau_%s_MC' % self.tauMVAWP )
 
         # Eta Phi Avg
-        self.diTauEtaPhiAvgData = self.f_etaphi.Get('diTau_%s_AVG_DATA' % self.tauMVAWP )
-        self.diTauEtaPhiAvgMC = self.f_etaphi.Get('diTau_%s_AVG_MC' % self.tauMVAWP )
-        self.eTauEtaPhiAvgData = self.f_etaphi.Get('eTau_%s_AVG_DATA' % self.tauMVAWP )
-        self.eTauEtaPhiAvgMC = self.f_etaphi.Get('eTau_%s_AVG_MC' % self.tauMVAWP )
-        self.muTauEtaPhiAvgData = self.f_etaphi.Get('muTau_%s_AVG_DATA' % self.tauMVAWP )
-        self.muTauEtaPhiAvgMC = self.f_etaphi.Get('muTau_%s_AVG_MC' % self.tauMVAWP )
+        self.diTauEtaPhiAvgData = self.f.Get('diTau_%s_AVG_DATA' % self.tauMVAWP )
+        self.diTauEtaPhiAvgMC = self.f.Get('diTau_%s_AVG_MC' % self.tauMVAWP )
+        self.eTauEtaPhiAvgData = self.f.Get('eTau_%s_AVG_DATA' % self.tauMVAWP )
+        self.eTauEtaPhiAvgMC = self.f.Get('eTau_%s_AVG_MC' % self.tauMVAWP )
+        self.muTauEtaPhiAvgData = self.f.Get('muTau_%s_AVG_DATA' % self.tauMVAWP )
+        self.muTauEtaPhiAvgMC = self.f.Get('muTau_%s_AVG_MC' % self.tauMVAWP )
 
 
     # Make sure we stay on our histograms
