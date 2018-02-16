@@ -98,6 +98,7 @@ double getEfficiency(double pt, double eta, double phi, const TH1* effHist, cons
   if ( effCorr_etaPhiAvg <= 0. ) {
     std::cerr << Form("One of the provided tau (eta, phi) values (%3.3f, %3.3f) is outside the boundary of triggering taus", eta, phi) << std::endl;
     std::cerr << "Returning efficiency = 0.0" << std::endl;
+    return 0.0;
   }
   eff *= (effCorr_etaPhi/effCorr_etaPhiAvg);
   return eff;
