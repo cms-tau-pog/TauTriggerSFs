@@ -12,9 +12,9 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
    * Mu+Tau Cross Trigger: HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
    * Elec+Tau Cross Trigger: HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
    * di-Tau Triggers: OR of all fully enabled triggers in 2017 data
-      * HLT_TightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg_CrossL1
-      * HLT_MediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg_CrossL1
-      * HLT_TightChargedIsoPFTau40_Trk1_eta2p1_Reg_CrossL1
+      * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+      * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+      * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
 
 The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2017 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
 
