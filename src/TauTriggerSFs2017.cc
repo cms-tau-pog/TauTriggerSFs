@@ -66,7 +66,7 @@ TauTriggerSFs2017::~TauTriggerSFs2017()
   delete inputFile_;
 }
 
-double getEfficiency(double pt, double eta, double phi, const TH1* effHist, const TH2* etaPhi, const TH2* etaPhiAvg)
+double getEfficiency(double pt, double eta, double phi, const TH1* effHist, const TH2* etaPhi, const TH2* etaPhiAvg, int central_or_shift = TauTriggerSFs2017::kCentral)
 {
   const TAxis* effHist_xAxis = effHist->GetXaxis();
   double ptMin = effHist_xAxis->GetXmin() + 1.e-1;
@@ -77,6 +77,15 @@ double getEfficiency(double pt, double eta, double phi, const TH1* effHist, cons
   int effHist_idxBin = (const_cast<TH1*>(effHist))->FindBin(pt_checked);
   assert(effHist_idxBin >= 1 && effHist_idxBin <= effHist->GetNbinsX());
   double eff = effHist->GetBinContent(effHist_idxBin);
+
+  double effErr = effHist->GetBinError(effHist_idxBin);
+  switch(central_or_shift)
+  {
+    case TauTriggerSFs2017::kCentral:                 break;
+    case TauTriggerSFs2017::kStatUp:   eff += effErr; break;
+    case TauTriggerSFs2017::kStatDown: eff -= effErr; break;
+    default: assert(0);
+  }
 
   // Adjust SF based on (eta, phi) location
   // keep eta barrel boundaries within SF region
@@ -105,20 +114,20 @@ double getEfficiency(double pt, double eta, double phi, const TH1* effHist, cons
   return eff;
 }
 
-double TauTriggerSFs2017::getDiTauEfficiencyData(double pt, double eta, double phi)
+double TauTriggerSFs2017::getDiTauEfficiencyData(double pt, double eta, double phi, int central_or_shift)
 {
-  return getEfficiency(pt, eta, phi, diTauData_, diTauEtaPhiData_, diTauEtaPhiAvgData_);
+  return getEfficiency(pt, eta, phi, diTauData_, diTauEtaPhiData_, diTauEtaPhiAvgData_, central_or_shift);
 }
 
-double TauTriggerSFs2017::getDiTauEfficiencyMC(double pt, double eta, double phi)
+double TauTriggerSFs2017::getDiTauEfficiencyMC(double pt, double eta, double phi, int central_or_shift)
 {
-  return getEfficiency(pt, eta, phi, diTauMC_, diTauEtaPhiMC_, diTauEtaPhiAvgMC_);
+  return getEfficiency(pt, eta, phi, diTauMC_, diTauEtaPhiMC_, diTauEtaPhiAvgMC_, central_or_shift);
 }
 
-double TauTriggerSFs2017::getDiTauScaleFactor(double pt, double eta, double phi)
+double TauTriggerSFs2017::getDiTauScaleFactor(double pt, double eta, double phi, int central_or_shift)
 {
-  double effData = getDiTauEfficiencyData(pt, eta, phi);
-  double effMC = getDiTauEfficiencyMC(pt, eta, phi);
+  double effData = getDiTauEfficiencyData(pt, eta, phi, central_or_shift);
+  double effMC = getDiTauEfficiencyMC(pt, eta, phi, central_or_shift);
   if ( effMC < 1e-5 ) {
     std::cerr << "Eff MC is suspiciously low. Please contact Tau POG." << std::endl;
     std::cerr << Form(" - DiTau Trigger SF for Tau MVA: %s   pT: %3.3f   eta: %3.3f   phi: %3.3f", tauMVAWP_.data(), pt, eta, phi) << std::endl;
@@ -129,20 +138,20 @@ double TauTriggerSFs2017::getDiTauScaleFactor(double pt, double eta, double phi)
   return sf;
 }
 
-double TauTriggerSFs2017::getMuTauEfficiencyData(double pt, double eta, double phi)
+double TauTriggerSFs2017::getMuTauEfficiencyData(double pt, double eta, double phi, int central_or_shift)
 {
-  return getEfficiency(pt, eta, phi, muTauData_, muTauEtaPhiData_, muTauEtaPhiAvgData_);
+  return getEfficiency(pt, eta, phi, muTauData_, muTauEtaPhiData_, muTauEtaPhiAvgData_, central_or_shift);
 }
 
-double TauTriggerSFs2017::getMuTauEfficiencyMC(double pt, double eta, double phi)
+double TauTriggerSFs2017::getMuTauEfficiencyMC(double pt, double eta, double phi, int central_or_shift)
 {
-  return getEfficiency(pt, eta, phi, muTauMC_, muTauEtaPhiMC_, muTauEtaPhiAvgMC_);
+  return getEfficiency(pt, eta, phi, muTauMC_, muTauEtaPhiMC_, muTauEtaPhiAvgMC_, central_or_shift);
 }
 
-double TauTriggerSFs2017::getMuTauScaleFactor(double pt, double eta, double phi)
+double TauTriggerSFs2017::getMuTauScaleFactor(double pt, double eta, double phi, int central_or_shift)
 {
-  double effData = getMuTauEfficiencyData(pt, eta, phi);
-  double effMC = getMuTauEfficiencyMC(pt, eta, phi);
+  double effData = getMuTauEfficiencyData(pt, eta, phi, central_or_shift);
+  double effMC = getMuTauEfficiencyMC(pt, eta, phi, central_or_shift);
   if ( effMC < 1e-5 ) {
     std::cerr << "Eff MC is suspiciously low. Please contact Tau POG." << std::endl;
     std::cerr << Form(" - MuTau Trigger SF for Tau MVA: %s   pT: %3.3f   eta: %3.3f   phi: %3.3f", tauMVAWP_.data(), pt, eta, phi) << std::endl;
@@ -153,20 +162,20 @@ double TauTriggerSFs2017::getMuTauScaleFactor(double pt, double eta, double phi)
   return sf;
 }
 
-double TauTriggerSFs2017::getETauEfficiencyData(double pt, double eta, double phi) 
+double TauTriggerSFs2017::getETauEfficiencyData(double pt, double eta, double phi, int central_or_shift)
 {
-  return getEfficiency(pt, eta, phi, eTauData_, eTauEtaPhiData_, eTauEtaPhiAvgData_);
+  return getEfficiency(pt, eta, phi, eTauData_, eTauEtaPhiData_, eTauEtaPhiAvgData_, central_or_shift);
 }
 
-double TauTriggerSFs2017::getETauEfficiencyMC(double pt, double eta, double phi)
+double TauTriggerSFs2017::getETauEfficiencyMC(double pt, double eta, double phi, int central_or_shift)
 {
-  return getEfficiency(pt, eta, phi, eTauMC_, eTauEtaPhiMC_, eTauEtaPhiAvgMC_);
+  return getEfficiency(pt, eta, phi, eTauMC_, eTauEtaPhiMC_, eTauEtaPhiAvgMC_, central_or_shift);
 }
 
-double TauTriggerSFs2017::getETauScaleFactor(double pt, double eta, double phi)
+double TauTriggerSFs2017::getETauScaleFactor(double pt, double eta, double phi, int central_or_shift)
 {
-  double effData = getETauEfficiencyData(pt, eta, phi);
-  double effMC = getETauEfficiencyMC(pt, eta, phi);
+  double effData = getETauEfficiencyData(pt, eta, phi, central_or_shift);
+  double effMC = getETauEfficiencyMC(pt, eta, phi, central_or_shift);
   if ( effMC < 1e-5 ) {
     std::cerr << "Eff MC is suspiciously low. Please contact Tau POG." << std::endl;
     std::cerr << Form(" - ETau Trigger SF for Tau MVA: %s   pT: %3.3f   eta: %3.3f   phi: %3.3f", tauMVAWP_.data(), pt, eta, phi) << std::endl;
