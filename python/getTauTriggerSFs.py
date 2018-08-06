@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 
 '''
 Class to get Tau Trigger SF based on 2017 Rereco data
@@ -10,6 +10,7 @@ T. Ruggles
 
 
 import ROOT
+import os
 
 class getTauTriggerSFs :
     
@@ -22,7 +23,9 @@ class getTauTriggerSFs :
         print "Loading Efficiencies for Tau MVA ID WP ", self.tauMVAWP
 
         # Load the TH1s containing the bin by bin values
-        self.f = ROOT.TFile( 'data/tauTriggerEfficiencies2017.root', 'r' )
+        # Assume this is in CMSSW with the below path structure
+        base = os.environ['CMSSW_BASE']
+        self.f = ROOT.TFile( base+'/src/TauTriggerSFs2017/TauTriggerSFs2017/data/tauTriggerEfficiencies2017.root', 'r' )
         self.diTauData = self.f.Get('hist_diTauTriggerEfficiency_%sTauMVA_DATA' % self.tauMVAWP )
         self.diTauMC = self.f.Get('hist_diTauTriggerEfficiency_%sTauMVA_MC' % self.tauMVAWP )
         self.eTauData = self.f.Get('hist_ETauTriggerEfficiency_%sTauMVA_DATA' % self.tauMVAWP )
