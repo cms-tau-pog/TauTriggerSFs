@@ -9,8 +9,10 @@ The c++ interface require you to scram b after checkout.
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
 
 Tau trigger SFs can be derived from the root file containing the pT dependent efficiency curves for the 3 provided trigger combinations (data/tauTriggerEfficiencies2017.root) :
-   * Mu+Tau Cross Trigger: HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
-   * Elec+Tau Cross Trigger: HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
+   * Mu+Tau Cross Trigger:
+      * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
+   * Elec+Tau Cross Trigger:
+      * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
    * di-Tau Triggers: OR of all fully enabled triggers in 2017 data
       * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
       * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
@@ -20,7 +22,7 @@ The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using Single
 
 # Accessing the Efficiencies and SFs
 
-A helper class, "getTauTriggerSFs", in python/getTauTriggerSFs.py can be used. It should be initialized with the desired Tau MVA ID WP being used. Currently only "medium", "tight", and "vtight" are available.
+A helper class, "getTauTriggerSFs", in python/getTauTriggerSFs.py can be used. It should be initialized with the desired Tau ID type (MVA or dR0p3) and WP being used. Currently supporting "vvloose", "vloose", "loose", "medium", "tight", "vtight", and "vvtight".
 
 This class has three methods to return the trigger SF for each of the trigger groups mentioned above:
    * getDiTauScaleFactor( pt, eta, phi )
@@ -41,9 +43,9 @@ It is found that there is a slight barrel vs. end cap difference in tau trigger 
 
 
 # Example Code
-For analysis using Tau MVA ID Tight:
+For analysis using Tau dR0p3 ID using Tight WP:
 ```
-tauSFs = getTauTriggerSFs('tight')
+tauSFs = getTauTriggerSFs('tight', 'dR0p3')
 diTauLeg1SF = tauSFs.getDiTauScaleFactor( pt1, eta1, phi1 )
 diTauLeg2SF = tauSFs.getDiTauScaleFactor( pt2, eta2, phi2 )
 ```
