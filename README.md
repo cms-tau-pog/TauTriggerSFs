@@ -1,8 +1,8 @@
 # Checkout Instructions
 
-For the current best tau trigger scale factors for 2017 data and MC do (this is pre-ReMiniaod for MCv2)
+For the current best tau trigger scale factors for 2017 data and MC do (this is a test branch for ReMiniaod)
 ```
-git clone -b tauTriggers2017_MCv2_PreReMiniaod git@github.com:truggles/TauTriggerSFs2017.git
+git clone -b tauTriggers2017_reMiniaod_test git@github.com:truggles/TauTriggerSFs2017.git TauTriggerSFs2017
 ```
 The c++ interface require you to scram b after checkout.
 
