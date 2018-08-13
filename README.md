@@ -22,7 +22,7 @@ The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using Single
 
 # Accessing the Efficiencies and SFs
 
-A helper class, "getTauTriggerSFs", in python/getTauTriggerSFs.py can be used. It should be initialized with the desired Tau ID type (MVA or dR0p3) and WP being used. Currently supporting "vvloose", "vloose", "loose", "medium", "tight", "vtight", and "vvtight".
+A helper class, "getTauTriggerSFs", in python/getTauTriggerSFs.py can be used. It should be initialized with the desired Tau ID type: "MVA" (dR0p5) or "dR0p3" (still an MVA-base ID), and WP being used. Currently supporting "vvloose", "vloose", "loose", "medium", "tight", "vtight", and "vvtight".
 
 This class has three methods to return the trigger SF for each of the trigger groups mentioned above:
    * getDiTauScaleFactor( pt, eta, phi )
@@ -43,11 +43,15 @@ It is found that there is a slight barrel vs. end cap difference in tau trigger 
 
 
 # Example Code
-For analysis using Tau dR0p3 ID using Tight WP:
+For analysis using Tau MVA dR0p3 ID using Tight WP:
 ```
 tauSFs = getTauTriggerSFs('tight', 'dR0p3')
 diTauLeg1SF = tauSFs.getDiTauScaleFactor( pt1, eta1, phi1 )
 diTauLeg2SF = tauSFs.getDiTauScaleFactor( pt2, eta2, phi2 )
+```
+For analysis using Tau MVA dR0p5 ID using Tight WP:
+```
+tauSFs = getTauTriggerSFs('tight', 'MVA')
 ```
 
 # For Detailed Trigger Uncertainty Studies

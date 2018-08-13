@@ -22,7 +22,7 @@ class getTauTriggerSFs :
         self.tauWP = tauWP
         self.wpType = wpType
         assert( self.tauWP in ['vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] ), "You must choose a WP from: vvloose, vloose, loose, medium, tight, vtight, or vvtight"
-        assert( self.wpType in ['MVA', 'dR0p3'] ), "Choose from two provided Iso/ID types: MVA, dR0p3"
+        assert( self.wpType in ['MVA', 'dR0p3'] ), "Choose from two provided ID types: 'MVA', 'dR0p3'. 'MVA' uses dR0p5, and 'dR0p3' is also an MVA-based ID."
         print "Loading Efficiencies for Tau %s ID WP %s" % (self.wpType, self.tauWP)
 
         # Assume this is in CMSSW with the below path structure
