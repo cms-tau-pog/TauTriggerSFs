@@ -1,50 +1,66 @@
-
+#!/usr/bin/env python
 
 '''
 Class to get Tau Trigger SF based on 2017 Rereco data
-and MCv2 (non-re-miniaod).
+and MCv2 (re-miniaod).
 
 T. Ruggles
 5 February, 2018
+Updated 12 August, 2018
 '''
 
 
 import ROOT
+import os
 
 class getTauTriggerSFs :
     
 
-    def __init__( self, tauMVAWP='medium' ):
+    def __init__( self, tauWP='medium', wpType='MVA' ):
 
         # Default to loading the Tau MVA Medium ID based WPs
-        self.tauMVAWP = tauMVAWP
-        assert( self.tauMVAWP in ['medium', 'tight', 'vtight'] ), "You must choose a WP from: medium, tight, or vtight (vloose and loose possibly coming with re-miniaod)"
-        print "Loading Efficiencies for Tau MVA ID WP ", self.tauMVAWP
+        self.tauWP = tauWP
+        self.wpType = wpType
+        assert( self.tauWP in ['vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] ), "You must choose a WP from: vvloose, vloose, loose, medium, tight, vtight, or vvtight"
+        assert( self.wpType in ['MVA', 'dR0p3'] ), "Choose from two provided ID types: 'MVA', 'dR0p3'. 'MVA' uses dR0p5, and 'dR0p3' is also an MVA-based ID."
+        print "Loading Efficiencies for Tau %s ID WP %s" % (self.wpType, self.tauWP)
+
+        # Assume this is in CMSSW with the below path structure
+        base = os.environ['CMSSW_BASE']
+        self.f_old = ROOT.TFile( base+'/src/TauTriggerSFs2017/TauTriggerSFs2017/data/tauTriggerEfficiencies2017.root', 'r' )
+        self.f = ROOT.TFile( base+'/src/TauTriggerSFs2017/TauTriggerSFs2017/data/tauTriggerEfficiencies2017_New.root', 'r' )
 
         # Load the TH1s containing the bin by bin values
-        self.f = ROOT.TFile( 'data/tauTriggerEfficiencies2017.root', 'r' )
-        self.diTauData = self.f.Get('hist_diTauTriggerEfficiency_%sTauMVA_DATA' % self.tauMVAWP )
-        self.diTauMC = self.f.Get('hist_diTauTriggerEfficiency_%sTauMVA_MC' % self.tauMVAWP )
-        self.eTauData = self.f.Get('hist_ETauTriggerEfficiency_%sTauMVA_DATA' % self.tauMVAWP )
-        self.eTauMC = self.f.Get('hist_ETauTriggerEfficiency_%sTauMVA_MC' % self.tauMVAWP )
-        self.muTauData = self.f.Get('hist_MuTauTriggerEfficiency_%sTauMVA_DATA' % self.tauMVAWP )
-        self.muTauMC = self.f.Get('hist_MuTauTriggerEfficiency_%sTauMVA_MC' % self.tauMVAWP )
+        self.diTauData = self.f.Get('hist_diTauTriggerEfficiency_%sTau%s_DATA' % (self.tauWP, self.wpType) )
+        self.diTauMC = self.f.Get('hist_diTauTriggerEfficiency_%sTau%s_MC' % (self.tauWP, self.wpType) )
+        self.eTauData = self.f.Get('hist_ETauTriggerEfficiency_%sTau%s_DATA' % (self.tauWP, self.wpType) )
+        self.eTauMC = self.f.Get('hist_ETauTriggerEfficiency_%sTau%s_MC' % (self.tauWP, self.wpType) )
+        self.muTauData = self.f.Get('hist_MuTauTriggerEfficiency_%sTau%s_DATA' % (self.tauWP, self.wpType) )
+        self.muTauMC = self.f.Get('hist_MuTauTriggerEfficiency_%sTau%s_MC' % (self.tauWP, self.wpType) )
         
+
+        # FIXME: Use the eta-phi efficiency corrections from pre-re-miniaod branch
+        # Only medium, tight, and vtight are provided and they are from MVA ID
+        tmpWP = self.tauWP
+        if tmpWP in ['vvloose', 'vloose', 'loose'] : tmpWP = 'medium'
+        if tmpWP == 'vvtight' : tmpWP = 'vtight'
+
+
         # Load the TH2s containing the eta phi efficiency corrections
-        self.diTauEtaPhiData = self.f.Get('diTau_%s_DATA' % self.tauMVAWP )
-        self.diTauEtaPhiMC = self.f.Get('diTau_%s_MC' % self.tauMVAWP )
-        self.eTauEtaPhiData = self.f.Get('eTau_%s_DATA' % self.tauMVAWP )
-        self.eTauEtaPhiMC = self.f.Get('eTau_%s_MC' % self.tauMVAWP )
-        self.muTauEtaPhiData = self.f.Get('muTau_%s_DATA' % self.tauMVAWP )
-        self.muTauEtaPhiMC = self.f.Get('muTau_%s_MC' % self.tauMVAWP )
+        self.diTauEtaPhiData = self.f_old.Get('diTau_%s_DATA' % tmpWP )
+        self.diTauEtaPhiMC = self.f_old.Get('diTau_%s_MC' % tmpWP )
+        self.eTauEtaPhiData = self.f_old.Get('eTau_%s_DATA' % tmpWP )
+        self.eTauEtaPhiMC = self.f_old.Get('eTau_%s_MC' % tmpWP )
+        self.muTauEtaPhiData = self.f_old.Get('muTau_%s_DATA' % tmpWP )
+        self.muTauEtaPhiMC = self.f_old.Get('muTau_%s_MC' % tmpWP )
 
         # Eta Phi Avg
-        self.diTauEtaPhiAvgData = self.f.Get('diTau_%s_AVG_DATA' % self.tauMVAWP )
-        self.diTauEtaPhiAvgMC = self.f.Get('diTau_%s_AVG_MC' % self.tauMVAWP )
-        self.eTauEtaPhiAvgData = self.f.Get('eTau_%s_AVG_DATA' % self.tauMVAWP )
-        self.eTauEtaPhiAvgMC = self.f.Get('eTau_%s_AVG_MC' % self.tauMVAWP )
-        self.muTauEtaPhiAvgData = self.f.Get('muTau_%s_AVG_DATA' % self.tauMVAWP )
-        self.muTauEtaPhiAvgMC = self.f.Get('muTau_%s_AVG_MC' % self.tauMVAWP )
+        self.diTauEtaPhiAvgData = self.f_old.Get('diTau_%s_AVG_DATA' % tmpWP )
+        self.diTauEtaPhiAvgMC = self.f_old.Get('diTau_%s_AVG_MC' % tmpWP )
+        self.eTauEtaPhiAvgData = self.f_old.Get('eTau_%s_AVG_DATA' % tmpWP )
+        self.eTauEtaPhiAvgMC = self.f_old.Get('eTau_%s_AVG_MC' % tmpWP )
+        self.muTauEtaPhiAvgData = self.f_old.Get('muTau_%s_AVG_DATA' % tmpWP )
+        self.muTauEtaPhiAvgMC = self.f_old.Get('muTau_%s_AVG_MC' % tmpWP )
 
 
     # Make sure we stay on our histograms
@@ -71,6 +87,7 @@ class getTauTriggerSFs :
             print "Returning efficiency = 0.0"
             return 0.0
         eff *= etaPhiVal / etaPhiAvg
+        if eff > 1. : eff = 1
         return eff
 
 
@@ -91,7 +108,7 @@ class getTauTriggerSFs :
         effMC = self.getDiTauEfficiencyMC( pt, eta, phi )
         if effMC < 1e-5 :
             print "Eff MC is suspiciously low. Please contact Tau POG."
-            print " - DiTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - DiTau Trigger SF for Tau ID: %s   WP: %s   pT: %f   eta: %s   phi: %f" % (self.wpType, self.tauWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
             return 0.0
         sf = effData / effMC
@@ -115,7 +132,7 @@ class getTauTriggerSFs :
         effMC = self.getMuTauEfficiencyMC( pt, eta, phi )
         if effMC < 1e-5 :
             print "Eff MC is suspiciously low. Please contact Tau POG."
-            print " - MuTau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - MuTau Trigger SF for Tau ID: %s   WP: %s   pT: %f   eta: %s   phi: %f" % (self.wpType, self.tauWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
             return 0.0
         sf = effData / effMC
@@ -140,12 +157,10 @@ class getTauTriggerSFs :
         effMC = self.getETauEfficiencyMC( pt, eta, phi )
         if effMC < 1e-5 :
             print "Eff MC is suspiciously low. Please contact Tau POG."
-            print " - ETau Trigger SF for Tau MVA: %s   pT: %f   eta: %s   phi: %f" % (self.tauMVAWP, pt, eta, phi)
+            print " - ETau Trigger SF for Tau ID: %s   WP: %s   pT: %f   eta: %s   phi: %f" % (self.wpType, self.tauWP, pt, eta, phi)
             print " - MC Efficiency = %f" % effMC
             return 0.0
         sf = effData / effMC
         return sf
-
-
 
 

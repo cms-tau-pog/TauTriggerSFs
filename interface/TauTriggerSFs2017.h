@@ -20,7 +20,10 @@
 class TauTriggerSFs2017
 {
 public:
-  TauTriggerSFs2017(const std::string& inputFileName, const std::string& tauMVAWP = "medium");
+
+  enum { kCentral, kStatUp, kStatDown };
+
+  TauTriggerSFs2017(const std::string& inputFileName, const std::string& inputFileNameOld, const std::string& tauWP = "medium", const std::string& wpType = "MVA");
   ~TauTriggerSFs2017();
 
   /**
@@ -28,39 +31,42 @@ public:
    * @return Values of efficiencies
    */
   // This is the efficiency for a single leg of the di-tau trigger
-  double getDiTauEfficiencyData(double pt, double eta, double phi);
+  double getDiTauEfficiencyData(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
   // This is the efficiency for the tau leg of the mu-tau trigger
-  double getMuTauEfficiencyData(double pt, double eta, double phi);
+  double getMuTauEfficiencyData(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
   // This is the efficiency for the tau leg of the e-tau trigger
-  double getETauEfficiencyData(double pt, double eta, double phi);
+  double getETauEfficiencyData(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
 
   /**
    * @brief Funtions to access efficiencies in MC
    * @return Values of efficiencies
    */
   // This is the efficiency for a single leg of the di-tau trigger
-  double getDiTauEfficiencyMC(double pt, double eta, double phi);
+  double getDiTauEfficiencyMC(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
   // This is the efficiency for the tau leg of the mu-tau trigger
-  double getMuTauEfficiencyMC(double pt, double eta, double phi);
+  double getMuTauEfficiencyMC(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
   // This is the efficiency for the tau leg of the e-tau trigger
-  double getETauEfficiencyMC(double pt, double eta, double phi);
+  double getETauEfficiencyMC(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
 
   /**
    * @brief Funtions to access data/MC scale-factors
    * @return Values of scale-factors
    */ 
   // This is the SF for a single leg of the di-tau trigger
-  double getDiTauScaleFactor(double pt, double eta, double phi);
+  double getDiTauScaleFactor(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
   // This is the SF for the tau leg of the mu-tau trigger
-  double getMuTauScaleFactor(double pt, double eta, double phi);
+  double getMuTauScaleFactor(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
   // This is the SF for the tau leg of the e-tau trigger
-  double getETauScaleFactor(double pt, double eta, double phi);
+  double getETauScaleFactor(double pt, double eta, double phi, int central_or_shift = TauTriggerSFs2017::kCentral);
 
 protected:
   std::string inputFileName_;
   TFile* inputFile_;
+  std::string inputFileNameOld_;
+  TFile* inputFileOld_;
 
-  std::string tauMVAWP_;
+  std::string tauWP_;
+  std::string wpType_;
 
   const TH1* diTauData_;
   const TH1* diTauMC_;

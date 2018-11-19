@@ -58,32 +58,39 @@ def getGraph( fName, hName, saveName ) :
 if '__main__' in __name__ :
     print "Making initial SF file"
 
-    oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2017.root', 'RECREATE' )
+    oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2017_New.root', 'RECREATE' )
     oFile.cd()
     
     histMap = {
         'histo_ETauTriggerPath_IsoMu20_LooseChargedIsoPFTau27_plusL1Tau26andHLTTau30' : 'ETauTriggerEfficiency',
         'histo_MuTauTriggerPath_IsoMu20_LooseChargedIsoPFTau27' : 'MuTauTriggerEfficiency',
-        'histo_DiTauTriggerPath_TightTau35TightIDorMediumTau40TightIDorTightTau40_plusL1Tau32' : 'diTauTriggerEfficiency',
+        'histo_DiTauTriggerPath_TightTau35TightIDorMediumTau35TightIDplusHLTTau40orTightTau35plusHLTTau40_plusL1Tau32' : 'diTauTriggerEfficiency',
     }
 
-    for tauWP in ['medium', 'tight', 'vtight'] :
-        dataFileName = 'fitOutput_Data_MuTau2017BCDEF_SFpaths_SSsubtraction_%sTauMVAWP.root' % tauWP
-        mcFileName = 'fitOutput_MC_MuTau2017_DYJetsFall17_nomPlusExt_SFpaths_OStaugenmatchPositive_%sTauMVAWP.root' % tauWP
-        for hName, saveName in histMap.iteritems() :
-            hData = getHist( dataFileName, hName, 'hist_'+saveName+'_'+tauWP+'TauMVA_DATA' )
-            gData = getGraph( dataFileName, hName, 'graph_'+saveName+'_'+tauWP+'TauMVA_DATA' )
-            print hData
-            hMC = getHist( mcFileName, hName, 'hist_'+saveName+'_'+tauWP+'TauMVA_MC' )
-            gMC = getGraph( mcFileName, hName, 'graph_'+saveName+'_'+tauWP+'TauMVA_MC' )
-            print hMC
-            oFile.cd()
-            hData.Write()
-            gData.Write()
-            hMC.Write()
-            gMC.Write()
+    wpMap = {
+        '2017v2' : 'MVA',
+        'dR0p32017v2' : 'dR0p3',
+    }
+
+    # Supporting 2017 MVA and cut-based 2017 dR0p3
+    for wp in wpMap.keys() :
+
+        for tauWP in ['vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] :
+            #dataFileName = 'fitOutput_Data_MuTau2017BCDEF_SFpaths_SSsubtraction_%sTauMVAWP.root' % tauWP
+            #mcFileName = 'fitOutput_MC_MuTau2017_DYJetsFall17_nomPlusExt_SFpaths_OStaugenmatchPositive_%sTauMVAWP.root' % tauWP
+            dataFileName = 'hales/fitOutput_Data_MuTau2017BCDEF_newFunction_%sWP%s_realTau.root' % (tauWP, wp)
+            mcFileName = 'hales/fitOutput_MC_MuTau2017_DYJetsFall17_newFunction_%sWP%s_realTau.root' % (tauWP, wp)
+            for hName, saveName in histMap.iteritems() :
+                hData = getHist( dataFileName, hName, 'hist_'+saveName+'_'+tauWP+'Tau'+wpMap[wp]+'_DATA' )
+                gData = getGraph( dataFileName, hName, 'graph_'+saveName+'_'+tauWP+'Tau'+wpMap[wp]+'_DATA' )
+                print hData
+                hMC = getHist( mcFileName, hName, 'hist_'+saveName+'_'+tauWP+'Tau'+wpMap[wp]+'_MC' )
+                gMC = getGraph( mcFileName, hName, 'graph_'+saveName+'_'+tauWP+'Tau'+wpMap[wp]+'_MC' )
+                print hMC
+                oFile.cd()
+                hData.Write()
+                gData.Write()
+                hMC.Write()
+                gMC.Write()
         
-
-
-
 
