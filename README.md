@@ -1,10 +1,15 @@
 # Checkout Instructions
 
-For the current best tau trigger scale factors for 2017 data and MC do (this is a test branch for ReMiniaod)
+For the current best tau trigger scale factors for 2017 data and MC, after checking out a fresh CMSSW release:
 ```
-git clone -b tauTriggers2017_reMiniaod_test git@github.com:truggles/TauTriggerSFs2017.git TauTriggerSFs2017
+mkdir TauTriggerSFs2017
+pushd TauTriggerSFs2017
+git clone -b tauTriggers2017_reMiniaod_test git@github.com:truggles/TauTriggerSFs2017.git
+popd
+scram b -j 8
 ```
-The c++ interface require you to scram b after checkout.
+For use in CMSSW, it is best if you keep the directory structure `${CMSSW_BASE}/src/TauTriggerSFs2017/TauTriggerSFs2017`.
+For additional details on using the c++ interface see below section on c++
 
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
 
@@ -57,5 +62,14 @@ tauSFs = getTauTriggerSFs('tight', 'MVA')
 # For Detailed Trigger Uncertainty Studies
 
 The original efficiency TGraphAsymmErrors for the efficiencies are stored as RooHists in case people would like direct access to the most proper description of the uncertainties for each bin. The TGraphAsymmErrors --> TH1 process does not preserve proper uncertainties, this is why both are provided.
+
+# For use with C++ interface
+
+Thank you to Christian Veelken and Artur Gottmann who have both contributed here.  
+The C++ interface requires you to have the proper directory structure from the initial checkout instructions.  
+You will need to update your `BuildFile.xml` to include `<use name="TauTriggerSFs2017/TauTriggerSFs2017" />`.
+For an example of how to use the code in an EDProducer see Artur/KIT's code here:
+   * `TauTrigger2017EfficiencyProducer.h`: https://github.com/KIT-CMS/KITHiggsToTauTau/blob/reduced_trigger_objects/interface/Producers/TauTrigger2017EfficiencyProducer.h
+   * `TauTrigger2017EfficiencyProducer.cc`: https://github.com/KIT-CMS/KITHiggsToTauTau/blob/reduced_trigger_objects/src/Producers/TauTrigger2017EfficiencyProducer.cc
 
 
