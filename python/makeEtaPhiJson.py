@@ -11,7 +11,7 @@ Date: 13 February 2019
 """
 
 import ROOT
-ROOT.gStyle.SetOptStat(0)
+#ROOT.gStyle.SetOptStat(0)
 from array import array
 ROOT.gROOT.SetBatch(True)
 import json
@@ -36,26 +36,25 @@ def printJson( to_dump ) :
         json.dump( to_dump, outFile, indent=2 )
         outFile.close()
 
-def get_trigger_map( wp ) :
+def get_trigger_map() :
 
+    # It turns out all triggers are measured from the same 2 files
     trigger_map = {
         'eTau' : {
-            'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_%sWP2017v2.root" % wp,
-            'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_%sWP2017v2.root" % wp,
+            'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_VVLooseWP2017v2.root",
+            'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_VVLooseWP2017v2.root",
             'ptThreshold' : 35,
             'accept' : 'hasHLTetau_Path_13',
         },
-        #'muTau' : {
-        #    'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_%sWP2017v2.root" % wp,
-        #    'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_%sWP2017v2.root" % wp,
-        #    #'data' : "...%sWP2017v2.root" % wp,
-        #    #'mc' : "..._%sWP2017v2.root" % wp,
-        #    'ptThreshold' : 32,
-        #    'accept' : 'hasHLTmutau_Path_13',
-        #},
+        'muTau' : {
+            'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_VVLooseWP2017v2.root",
+            'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_VVLooseWP2017v2.root",
+            'ptThreshold' : 32,
+            'accept' : 'hasHLTmutauPath_13',
+        },
         'diTau' : {
-            'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_%sWP2017v2.root" % wp,
-            'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_%sWP2017v2.root" % wp,
+            'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_VVLooseWP2017v2.root",
+            'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_VVLooseWP2017v2.root",
             'ptThreshold' : 40,
             'accept' : 'hasHLTditauPath_9or10or11',
         },
@@ -63,19 +62,36 @@ def get_trigger_map( wp ) :
 
     return trigger_map
 
+
+
+wp_map = {
+    'vvtight' : 'byVVTightIsolationMVArun2017v2DBoldDMwLT2017',
+    'vtight' : 'byVTightIsolationMVArun2017v2DBoldDMwLT2017',
+    'tight' : 'byTightIsolationMVArun2017v2DBoldDMwLT2017',
+    'medium' : 'byMediumIsolationMVArun2017v2DBoldDMwLT2017',
+    'loose' : 'byLooseIsolationMVArun2017v2DBoldDMwLT2017',
+    'vloose' : 'byVLooseIsolationMVArun2017v2DBoldDMwLT2017',
+    'vvloose' : 'byVVLooseIsolationMVArun2017v2DBoldDMwLT2017', # Not supporting the VVLoose WP
+}
+
+
 saveDir = '/afs/cern.ch/user/t/truggles/www/tau_fits_Feb13v1/'
 
 x_var = "tauPt"
 x_var = "tauEta"
 y_var = "tauPhi"
 weight = "bkgSubW"
-wp = "VVLoose"
-trigger_map = get_trigger_map( wp )
+trigger_map = get_trigger_map()
 
 
 # For visualization
-xBinning = array('f', [-2.3, -2.1, -1.5, 0, 1.5, 2.1, 2.3] )
-yBinning = array('f', [-3.2, 2.8, 3.2] )
+#xBinning = array('f', [] )
+#yBinning = array('f', [] )
+#for i in range( -23, 24 ) :
+#    xBinning.append( i/10. )
+#for i in range( -32, 33 ) :
+#    yBinning.append( i/10. )
+    
 
 # For computing json file
 xBinning = array('f', [-2.3, 2.3] )
@@ -86,6 +102,13 @@ eta_phi_regions = {
     'EndCap' : '(abs(tauEta) > 1.5)',
     'NonPixelProblemBarrel' : '(abs(tauEta) < 1.5 && (tauPhi < 2.8 || tauEta <= 0))',
     'PixelProblemBarrel' : '(tauEta > 0 && tauEta < 1.5 && tauPhi > 2.8)',
+}
+
+dm_map = {
+    'DM0' : 'tauDM == 0',
+    'DM1' : 'tauDM == 1',
+    'DM10' : 'tauDM == 10',
+    'DMCmb' : 'tauDM > -1',
 }
 
 all_info = {}
@@ -104,11 +127,6 @@ for trigger in trigger_map.keys() :
     p.Draw()
     p.cd()
 
-    # FIXME once we have more files or now how to access this
-    # we need a loop here. Are multiple WPs stored in the same file?
-    # Or do we need to open a new file for each?
-    #for wp in wpList :
-    
     for sample in ['data', 'mc'] :
 
         all_info[ trigger ][ sample ] = {}
@@ -117,30 +135,40 @@ for trigger in trigger_map.keys() :
         print trigger, sample, f
         t = f.Get("TagAndProbe")
 
+        for wp, wp_long in wp_map.iteritems() :
+    
+            all_info[ trigger ][ sample ][ wp ] = {}
 
-        for region, etaPhiCut in eta_phi_regions.iteritems() :
+            for dm, dm_cut in dm_map.iteritems() :
+
+                all_info[ trigger ][ sample ][ wp ][ dm ] = {}
+
+                for region, etaPhiCut in eta_phi_regions.iteritems() :
     
 
-            h_sample_pass = get_hist_2d( 'h_%s_%s_pass' % (trigger, sample), t, \
-                    "(%s==1 && tauPt > %i && %s)" % (accept, trigger_map[ trigger ]['ptThreshold'], etaPhiCut), \
-                    "(%s)" % weight, x_var, y_var, xBinning, yBinning )
+                    h_sample_pass = get_hist_2d( 'h_%s_%s_pass' % (trigger, sample), t, \
+                            "(%s==1 && tauPt > %i && %s && %s > 0.5 && %s)" % (accept, \
+                            trigger_map[ trigger ]['ptThreshold'], etaPhiCut, wp_long, dm_cut), \
+                            "(%s)" % weight, x_var, y_var, xBinning, yBinning )
 
-            h_sample_total = get_hist_2d( 'h_%s_%s_total' % (trigger, sample), t, \
-                    "(tauPt > %i && %s)" % (trigger_map[ trigger ]['ptThreshold'], etaPhiCut), \
-                    "(%s)" % weight, x_var, y_var, xBinning, yBinning )
-            
-            h_efficiency = h_sample_pass.Clone()
-            h_efficiency.Divide( h_sample_total )
-            #h_efficiency.Draw('COLZ TEXT')
-            h_efficiency.Draw('COLZ')
-            h_efficiency.GetZaxis().SetRangeUser(0, 1.1)
+                    h_sample_total = get_hist_2d( 'h_%s_%s_total' % (trigger, sample), t, \
+                            "(tauPt > %i && %s && %s > 0.5 && %s)" % \
+                            (trigger_map[ trigger ]['ptThreshold'], etaPhiCut, wp_long, dm_cut), \
+                            "(%s)" % weight, x_var, y_var, xBinning, yBinning )
+                    
+                    h_efficiency = h_sample_pass.Clone()
+                    h_efficiency.Divide( h_sample_total )
+                    #h_efficiency.Draw('COLZ TEXT')
+                    h_efficiency.Draw('COLZ')
+                    h_efficiency.GetZaxis().SetRangeUser(-1.1, 1.1)
 
-            # Add to info_map
-            all_info[ trigger ][ sample ][ region ] = round( h_efficiency.GetBinContent( h_efficiency.FindBin( 0., 0. ) ), 3 )
+                    # Add to info_map
+                    all_info[ trigger ][ sample ][ wp ][ dm ][ region ] = \
+                        round( h_efficiency.GetBinContent( h_efficiency.FindBin( 0., 0. ) ), 3 )
 
-            #c.SaveAs( saveDir+'%s_%s_%s_%s.png' % (trigger, wp, sample, region) )
-        
-            del h_sample_pass, h_sample_total, h_efficiency
+                    #c.SaveAs( saveDir+'%s_%s_%s_DM%s_%s.png' % (trigger, wp, sample, dm, region) )
+                
+                    del h_sample_pass, h_sample_total, h_efficiency
         
 printJson( all_info )
 
