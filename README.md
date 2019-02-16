@@ -58,4 +58,16 @@ tauSFs = getTauTriggerSFs('tight', 'MVA')
 
 The original efficiency TGraphAsymmErrors for the efficiencies are stored as RooHists in case people would like direct access to the most proper description of the uncertainties for each bin. The TGraphAsymmErrors --> TH1 process does not preserve proper uncertainties, this is why both are provided.
 
+# For Recreating Efficiency ROOT File for Other Years
 
+There are some simple python scripts available to create the ROOT file used by `python/getTauTriggerSFs.py`. These are current set up to take the Tau POG style ntuples and the fit files created by Hale. Important files:
+   * `makeEtaPhiJson.py`: create eta-phi efficiency maps. If detector conditions were perfect, these could be used to account for differences in eta efficiencies between barrel and endcap. As it is, in 2017 the eta-phi mapping targets the 2017 pixel problem region. This should be edited for delivery of 2018 eta-phi efficiencies.
+   * `makeEtaPhiFiles.py`: converts the output JSON file from `makeEtaPhiJson.py` into a ROOT file with TH2s representing the eta-phi efficiencies.
+   * `copyEfficiencies.py`: copies and renames the needed portions of the resulting fit ROOT file to use by the tool.
+
+```
+python python/makeEtaPhiJson.py
+python python/makeEtaPhiFiles.py
+python python/copyEfficiencies.py
+hadd data/tauTriggerEfficiencies2017.root data/tauTriggerEfficiencies2017_FINAL.root data/tauTriggerEfficienciesEtaPhi2017_FINAL.root
+```
