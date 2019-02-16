@@ -13,6 +13,7 @@ Updated 16 Feb, 2019
 
 import ROOT
 import os
+from math import sqrt
 
 class getTauTriggerSFs :
     
@@ -90,9 +91,17 @@ class getTauTriggerSFs :
         elif pt < 20 : pt = 20
         return pt
 
-    def getEfficiency( self, pt, eta, phi, effHist, etaPhiHist, etaPhiAvgHist ) :
+    def getEfficiency( self, pt, eta, phi, effHist, etaPhiHist, etaPhiAvgHist, uncert='Nominal' ) :
         pt = self.ptCheck( pt )
         eff = effHist.GetBinContent( effHist.FindBin( pt ) )
+
+        # Shift the pt dependent efficiency by the fit uncertainty if requested
+        if uncert != 'Nominal' :
+            assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
+            if uncert == 'Up' :
+                eff += effHist.GetBinError( effHist.FindBin( pt ) )
+            else : # must be Down
+                eff -= effHist.GetBinError( effHist.FindBin( pt ) )
 
         # Adjust SF based on (eta, phi) location
         # keep eta barrel boundaries within SF region
@@ -112,18 +121,34 @@ class getTauTriggerSFs :
         return eff
 
 
-    # return the data efficiency
+    # return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyData( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ])
+    def getTriggerEfficiencyDataUncertUp( self, pt, eta, phi, dm ) :
+        assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], \
+            self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Up' )
+    def getTriggerEfficiencyDataUncertDown( self, pt, eta, phi, dm ) :
+        assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], \
+            self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Down' )
 
 
-    # return the MC efficiency
+    # return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyMC( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ])
+    def getTriggerEfficiencyMCUncertUp( self, pt, eta, phi, dm ) :
+        assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], \
+            self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Up' )
+    def getTriggerEfficiencyMCUncertDown( self, pt, eta, phi, dm ) :
+        assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], \
+            self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Down' )
 
 
     # return the data/MC scale factor
@@ -138,6 +163,33 @@ class getTauTriggerSFs :
             return 0.0
         sf = effData / effMC
         return sf
+
+
+    # return the data/MC scale factor with +1/-1 sigma uncertainty.
+    # Data and MC fit uncertainties are treated as uncorrelated.
+    # The calculated uncertainties are symmetric. Do error propagation
+    # for simple division.
+    def getTriggerScaleFactorUncert( self, pt, eta, phi, dm, uncert ) :
+        assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
+        pt = self.ptCheck( pt )
+
+        effData = self.getTriggerEfficiencyData( pt, eta, phi, dm )
+        effDataUp = self.getTriggerEfficiencyDataUncertUp( pt, eta, phi, dm )
+        relDataDiff = (effDataUp - effData) / effData
+
+        effMC = self.getTriggerEfficiencyMC( pt, eta, phi, dm )
+        effMCUp = self.getTriggerEfficiencyMCUncertUp( pt, eta, phi, dm )
+        if effMC < 1e-5 :
+            # already printed an error for the nominal case...
+            return 0.0
+        relMCDiff = (effMCUp - effMC) / effMC
+
+        deltaSF = sqrt( relDataDiff**2 + relMCDiff**2 )
+        sf = (effData / effMC)
+        if uncert == 'Up' :
+            return sf * (1. + deltaSF)
+        else : # must be Down
+            return sf * (1. - deltaSF)
 
 
 
