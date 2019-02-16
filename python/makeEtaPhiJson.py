@@ -40,19 +40,19 @@ def get_trigger_map() :
 
     # It turns out all triggers are measured from the same 2 files
     trigger_map = {
-        'eTau' : {
+        'etau' : {
             'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_VVLooseWP2017v2.root",
             'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_VVLooseWP2017v2.root",
             'ptThreshold' : 35,
             'accept' : 'hasHLTetau_Path_13',
         },
-        'muTau' : {
+        'mutau' : {
             'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_VVLooseWP2017v2.root",
             'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_VVLooseWP2017v2.root",
             'ptThreshold' : 32,
             'accept' : 'hasHLTmutauPath_13',
         },
-        'diTau' : {
+        'ditau' : {
             'data' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_Data_Run2017BCDEF_31Mar2018_SSsubtraction_VVLooseWP2017v2.root",
             'mc' : "/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/NTuple_DYJetsToLL_12Apr2018_v1Andext1v1_12062018_puWeightsANDtauEScorrectionIncluded_OStauGenMatched_VVLooseWP2017v2.root",
             'ptThreshold' : 40,
@@ -105,10 +105,10 @@ eta_phi_regions = {
 }
 
 dm_map = {
-    'DM0' : 'tauDM == 0',
-    'DM1' : 'tauDM == 1',
-    'DM10' : 'tauDM == 10',
-    'DMCmb' : 'tauDM > -1',
+    'dm0' : 'tauDM == 0',
+    'dm1' : 'tauDM == 1',
+    'dm10' : 'tauDM == 10',
+    'dmCmb' : 'tauDM > -1',
 }
 
 all_info = {}

@@ -62,15 +62,15 @@ yBinning = array('f', [-3.2, 2.8, 3.2] )
 xBinningAvg = array('f', [-2.5, -2.1, 2.1, 2.5] )
 yBinningAvg = array('f', [-3.2, 3.2] )
 
-for trigger in ['diTau', 'eTau', 'muTau'] :
+for trigger in ['ditau', 'etau', 'mutau'] :
     for wp in ['vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight' ] :
-        for dm in ['DM0', 'DM1', 'DM10', 'DMCmb'] :
+        for dm in ['dm0', 'dm1', 'dm10', 'dmCmb'] :
             print trigger, wp, dm
-            h_data = ROOT.TH2F( '%s_%s_%s_DATA' % (trigger, wp, dm), '%s_%s_%s_DATA;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
-            h_mc = ROOT.TH2F( '%s_%s_%s_MC' % (trigger, wp, dm), '%s_%s_%s_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
+            h_data = ROOT.TH2F( '%s_%sMVAv2_%s_DATA' % (trigger, wp, dm), '%s_%sMVAv2_%s_DATA;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
+            h_mc = ROOT.TH2F( '%s_%sMVAv2_%s_MC' % (trigger, wp, dm), '%s_%sMVAv2_%s_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
 
-            h_data_avg = ROOT.TH2F( '%s_%s_%s_DATA_AVG' % (trigger, wp, dm), '%s_%s_%s_AVG_DATA;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg) 
-            h_mc_avg = ROOT.TH2F( '%s_%s_%s_MC_AVG' % (trigger, wp, dm), '%s_%s_%s_AVG_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg) 
+            h_data_avg = ROOT.TH2F( '%s_%sMVAv2_%s_DATA_AVG' % (trigger, wp, dm), '%s_%sMVAv2_%s_AVG_DATA;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg) 
+            h_mc_avg = ROOT.TH2F( '%s_%sMVAv2_%s_MC_AVG' % (trigger, wp, dm), '%s_%sMVAv2_%s_AVG_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg) 
 
 
             fillH2( trigger, wp, dm, 'data', info_map, h_data )
