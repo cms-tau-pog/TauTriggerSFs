@@ -14,16 +14,18 @@ def build_legend( graphs ) :
     return legend
     
 
-def make_plots( tauSFs, target_type = 'di-tau' ) :
+def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
 
-    if target_type == 'di-tau' :
-        min_ = 35
+    wp = 'MVAv2'
+
+    if target_type == 'ditau' :
+        min_ = 40
         name = 'Di-Tau'
-    if target_type == 'e-tau' :
-        min_ = 30
+    if target_type == 'etau' :
+        min_ = 35
         name = 'E-Tau'
-    if target_type == 'mu-tau' :
-        min_ = 25
+    if target_type == 'mutau' :
+        min_ = 32
         name = 'Mu-Tau'
 
     pts = array('d', [])
@@ -33,18 +35,18 @@ def make_plots( tauSFs, target_type = 'di-tau' ) :
 
     for pt in range( min_, 200 ) :
         pts.append( pt )
-        if target_type == 'di-tau' :
-            sfs.append( tauSFs.getDiTauScaleFactor( pt, 0.0, 0.0 ) )
-            sfs2.append( tauSFs.getDiTauScaleFactor( pt, 2.0, 0.0 ) )
-            sfs3.append( tauSFs.getDiTauScaleFactor( pt, 1.0, 2.9 ) )
-        if target_type == 'e-tau' :
-            sfs.append( tauSFs.getETauScaleFactor( pt, 0.0, 0.0 ) )
-            sfs2.append( tauSFs.getETauScaleFactor( pt, 2.0, 0.0 ) )
-            sfs3.append( tauSFs.getETauScaleFactor( pt, 1.0, 2.9 ) )
-        if target_type == 'mu-tau' :
-            sfs.append( tauSFs.getMuTauScaleFactor( pt, 0.0, 0.0 ) )
-            sfs2.append( tauSFs.getMuTauScaleFactor( pt, 2.0, 0.0 ) )
-            sfs3.append( tauSFs.getMuTauScaleFactor( pt, 1.0, 2.9 ) )
+        if target_type == 'ditau' :
+            sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
+            sfs2.append( tauSFs.getTriggerScaleFactor( pt, 2.0, 0.0, dm ) )
+            sfs3.append( tauSFs.getTriggerScaleFactor( pt, 1.0, 2.9, dm ) )
+        if target_type == 'etau' :
+            sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
+            sfs2.append( tauSFs.getTriggerScaleFactor( pt, 2.0, 0.0, dm ) )
+            sfs3.append( tauSFs.getTriggerScaleFactor( pt, 1.0, 2.9, dm ) )
+        if target_type == 'mutau' :
+            sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
+            sfs2.append( tauSFs.getTriggerScaleFactor( pt, 2.0, 0.0, dm ) )
+            sfs3.append( tauSFs.getTriggerScaleFactor( pt, 1.0, 2.9, dm ) )
 
     g = ROOT.TGraph( len(pts), pts, sfs )
     g2 = ROOT.TGraph( len(pts), pts, sfs2 )
@@ -67,7 +69,7 @@ def make_plots( tauSFs, target_type = 'di-tau' ) :
     leg.Draw('same')
     g.SetTitle( '%s, type: %s, WP: %s' % (name, wp, tauWP) )
     p.Update()
-    c.SaveAs('/afs/cern.ch/user/t/truggles/www/tauSFs/Aug12_new_SFs/old_'+name+'_'+wp+'_'+tauWP+'.png')
+    c.SaveAs('/afs/cern.ch/user/t/truggles/www/tauSFs/Feb16_new_SFs/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
 
     del sfs, sfs2, sfs3, g, g2, g3, mg
 
@@ -77,13 +79,23 @@ p = ROOT.TPad('p','p',0,0,1,1)
 p.Draw()
 p.cd()
 
-for wp in ['MVA',]:# 'dR0p3'] :
-    #for tauWP in ['vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] :
-    for tauWP in ['medium', 'tight', 'vtight'] :
-        #tauSFs = getTauTriggerSFs(tauWP, wp)
-        tauSFs = getTauTriggerSFs(tauWP)
+for trigger in ['ditau',]:# 'mutau', 'etau'] :
+    #for tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] :
+    for tauWP in ['vloose', 'medium', 'vvtight'] :
+        tauSFs = getTauTriggerSFs('ditau', 2017, tauWP, 'MVAv2')
+        make_plots( tauSFs, 'ditau', 0 )
+        make_plots( tauSFs, 'ditau', 1 )
+        make_plots( tauSFs, 'ditau', 10 )
+        del tauSFs
+        tauSFs = getTauTriggerSFs('etau', 2017, tauWP, 'MVAv2')
+        make_plots( tauSFs, 'etau', 0 )
+        make_plots( tauSFs, 'etau', 1 )
+        make_plots( tauSFs, 'etau', 10 )
+        del tauSFs
+        tauSFs = getTauTriggerSFs('mutau', 2017, tauWP, 'MVAv2')
+        make_plots( tauSFs, 'mutau', 0 )
+        make_plots( tauSFs, 'mutau', 1 )
+        make_plots( tauSFs, 'mutau', 10 )
+        del tauSFs
 
-        make_plots( tauSFs, 'di-tau' )
-        make_plots( tauSFs, 'e-tau' )
-        make_plots( tauSFs, 'mu-tau' )
 
