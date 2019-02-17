@@ -32,7 +32,7 @@ def get_hist_2d( name, tree, cut, weight, x_var, y_var, xBinning, yBinning ) :
     return h
 
 def printJson( to_dump ) :
-    with open('efficiencies.json', 'w') as outFile :
+    with open('data/tauTriggerEfficienciesEtaPhiMap2017_FINAL.json', 'w') as outFile :
         json.dump( to_dump, outFile, indent=2 )
         outFile.close()
 
