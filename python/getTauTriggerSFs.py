@@ -39,26 +39,26 @@ class getTauTriggerSFs :
 
         ## Load the TF1s containing the analytic best-fit results.
         ## This is done per decay mode: 0, 1, 10.
-        #self.fitDataMap = {}
-        #self.fitMCMap = {}
-        #self.fitDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA_fit' % (self.trigger, self.tauWP, self.wpType ) )
-        #self.fitDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA_fit' % (self.trigger, self.tauWP, self.wpType ) )
-        #self.fitDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA_fit' % (self.trigger, self.tauWP, self.wpType ) )
-        #self.fitMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC_fit' % (self.trigger, self.tauWP, self.wpType ) )
-        #self.fitMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_fit' % (self.trigger, self.tauWP, self.wpType ) )
-        #self.fitMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_fit' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitDataMap = {}
+        self.fitMCMap = {}
+        self.fitDataMap[ 0 ] = ROOT.gDirectory.Get('%s_%s%s_dm0_DATA_fit' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitDataMap[ 1 ] = ROOT.gDirectory.Get('%s_%s%s_dm1_DATA_fit' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitDataMap[ 10 ] = ROOT.gDirectory.Get('%s_%s%s_dm10_DATA_fit' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitMCMap[ 0 ] = ROOT.gDirectory.Get('%s_%s%s_dm0_MC_fit' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitMCMap[ 1 ] = ROOT.gDirectory.Get('%s_%s%s_dm1_MC_fit' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitMCMap[ 10 ] = ROOT.gDirectory.Get('%s_%s%s_dm10_MC_fit' % (self.trigger, self.tauWP, self.wpType ) )
         
 
         # Load the TH1s containing the analytic best-fit result in 1 GeV incriments and the associated uncertainty.
         # This is done per decay mode: 0, 1, 10.
-        self.fitDataMap = {}
-        self.fitMCMap = {}
-        self.fitDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
-        self.fitDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
-        self.fitDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
-        self.fitMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
-        self.fitMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
-        self.fitMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitUncDataMap = {}
+        self.fitUncMCMap = {}
+        self.fitUncDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitUncDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitUncDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitUncMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitUncMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
+        self.fitUncMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
         
 
         # Load the TH2s containing the eta phi efficiency corrections
@@ -91,17 +91,17 @@ class getTauTriggerSFs :
         elif pt < 20 : pt = 20
         return pt
 
-    def getEfficiency( self, pt, eta, phi, effHist, etaPhiHist, etaPhiAvgHist, uncert='Nominal' ) :
+    def getEfficiency( self, pt, eta, phi, fit, uncHist, etaPhiHist, etaPhiAvgHist, uncert='Nominal' ) :
         pt = self.ptCheck( pt )
-        eff = effHist.GetBinContent( effHist.FindBin( pt ) )
+        eff = fit.Eval( pt )
 
         # Shift the pt dependent efficiency by the fit uncertainty if requested
         if uncert != 'Nominal' :
             assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
             if uncert == 'Up' :
-                eff += effHist.GetBinError( effHist.FindBin( pt ) )
+                eff += uncHist.GetBinError( uncHist.FindBin( pt ) )
             else : # must be Down
-                eff -= effHist.GetBinError( effHist.FindBin( pt ) )
+                eff -= uncHist.GetBinError( uncHist.FindBin( pt ) )
 
         # Adjust SF based on (eta, phi) location
         # keep eta barrel boundaries within SF region
@@ -124,30 +124,30 @@ class getTauTriggerSFs :
     # return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyData( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ])
     def getTriggerEfficiencyDataUncertUp( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Up' )
     def getTriggerEfficiencyDataUncertDown( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Down' )
 
 
     # return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyMC( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ])
     def getTriggerEfficiencyMCUncertUp( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Up' )
     def getTriggerEfficiencyMCUncertDown( self, pt, eta, phi, dm ) :
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Down' )
 
 
