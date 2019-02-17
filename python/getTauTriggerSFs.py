@@ -168,21 +168,23 @@ class getTauTriggerSFs :
     # return the data/MC scale factor with +1/-1 sigma uncertainty.
     # Data and MC fit uncertainties are treated as uncorrelated.
     # The calculated uncertainties are symmetric. Do error propagation
-    # for simple division.
+    # for simple division. Using getTriggerEfficiencyXXXUncertDown instead
+    # of Up ensures we have the full uncertainty reported. Up sometimes
+    # is clipped by efficiency max of 1.0.
     def getTriggerScaleFactorUncert( self, pt, eta, phi, dm, uncert ) :
         assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
         pt = self.ptCheck( pt )
 
         effData = self.getTriggerEfficiencyData( pt, eta, phi, dm )
-        effDataUp = self.getTriggerEfficiencyDataUncertUp( pt, eta, phi, dm )
-        relDataDiff = (effDataUp - effData) / effData
+        effDataDown = self.getTriggerEfficiencyDataUncertDown( pt, eta, phi, dm )
+        relDataDiff = (effData - effDataDown) / effData
 
         effMC = self.getTriggerEfficiencyMC( pt, eta, phi, dm )
-        effMCUp = self.getTriggerEfficiencyMCUncertUp( pt, eta, phi, dm )
+        effMCDown = self.getTriggerEfficiencyMCUncertDown( pt, eta, phi, dm )
         if effMC < 1e-5 :
             # already printed an error for the nominal case...
             return 0.0
-        relMCDiff = (effMCUp - effMC) / effMC
+        relMCDiff = (effMC - effMCDown) / effMC
 
         deltaSF = sqrt( relDataDiff**2 + relMCDiff**2 )
         sf = (effData / effMC)
