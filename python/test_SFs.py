@@ -1,6 +1,6 @@
 import ROOT
 ROOT.gROOT.SetBatch(True)
-from getTauTriggerSFs import getTauTriggerSFs
+from TauAnalysisTools.TauTriggerSFs.getTauTriggerSFs import getTauTriggerSFs
 from array import array
 
 

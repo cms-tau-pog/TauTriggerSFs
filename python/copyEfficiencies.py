@@ -8,7 +8,7 @@ efficiency ingredients:
 """
 
 import ROOT
-from helpers import getHist, getGraph, getFit
+from TauAnalysisTools.TauTriggerSFs.helpers import getHist, getGraph, getFit
 
 
 

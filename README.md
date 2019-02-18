@@ -2,7 +2,10 @@
 
 For the current best tau trigger scale factors for 2017 data and MC do:
 ```
-git clone -b final_2017_MCv2 git@github.com:truggles/TauTriggerSFs.git TauAnalysisTools
+cd $CMSSW_BASE/src
+mkdir TauAnalysisTools
+cd TauAnalysisTools
+git clone -b final_2017_MCv2 git@github.com:truggles/TauTriggerSFs.git TauTriggerSFs
 ```
 The c++ interface require you to scram b after checkout. If you do not place the code in the above hierarchy within CMSSW
 the python paths are not guaranteed to work.
