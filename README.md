@@ -1,14 +1,15 @@
 # Checkout Instructions
 
-For the current best tau trigger scale factors for 2017 data and MC do (this is a test branch for ReMiniaod)
+For the current best tau trigger scale factors for 2017 data and MC do:
 ```
-git clone -b tauTriggers2017_reMiniaod_test git@github.com:truggles/TauTriggerSFs2017.git TauTriggerSFs2017
+git clone -b final_2017_MCv2 git@github.com:truggles/TauTriggerSFs.git TauAnalysisTools
 ```
-The c++ interface require you to scram b after checkout.
+The c++ interface require you to scram b after checkout. If you do not place the code in the above hierarchy within CMSSW
+the python paths are not guaranteed to work.
 
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
 
-Tau trigger SFs can be derived from the root file containing the pT dependent efficiency curves for the 3 provided trigger combinations (data/tauTriggerEfficiencies2017.root) :
+Tau trigger SFs can be derived from the root file containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies2017.root` :
    * Mu+Tau Cross Trigger:
       * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
    * Elec+Tau Cross Trigger:
@@ -18,45 +19,66 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
       * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
       * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
 
-The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2017 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
+Original efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2018 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
+
+Update SFs are provided on the 31Mar2018 ReReco data.
+
+# Trigger Efficiency / SF Fit and Uncertainties
+
+Starting with the 2017 dataset, we are attempting to provide trigger efficiency uncertainties based on the results of the analytic fit of the TGraphAsymmErrors. The fit function is a modified CrystalBall CDF: `fit = ROOT.TF1('fit', '[5] - ROOT::Math::crystalball_cdf(-x, [0], [1], [2], [3])*([4])')`. 
+The uncertainties are aimed to provide we well motivated description of the trigger efficiency uncertainty. We have not tested the results of this method against the previous standard method which was applying a flat log-normal uncertainty in an analysis workflow. The fit uncertainties tend to lead to larger relative uncertainty in the trigger turn-on region and smaller relative uncertainties in the plateau region.
+
+Application of the efficiency and SF uncertainties should be considered _EXPERIMENTAL_ at the moment. We are curious to hear feedback.
 
 # Accessing the Efficiencies and SFs
 
-A helper class, "getTauTriggerSFs", in python/getTauTriggerSFs.py can be used. It should be initialized with the desired Tau ID type: "MVA" (dR0p5) or "dR0p3" (still an MVA-base ID), and WP being used. Currently supporting "vvloose", "vloose", "loose", "medium", "tight", "vtight", and "vvtight".
+A helper class, `getTauTriggerSFs`, in `python/getTauTriggerSFs.py` can be used. It should be initialized with:
+   * the desired trigger: `ditau`, `mutau`, `etau`
+   * the data year: 2017 as an int (currently on 2017 provided)
+   * the WP being used: `vloose`, `loose`, `medium`, `tight`, `vtight`, and `vvtight` (`vvloose` is not supported by the Tau POG)
+   * the desired Tau ID type: `MVAv2` which uses dR0p5. The `dR0p3` WPs are not supported currently.
 
-This class has three methods to return the trigger SF for each of the trigger groups mentioned above:
-   * getDiTauScaleFactor( pt, eta, phi )
-   * getETauScaleFactor( pt, eta, phi )
-   * getMuTauScaleFactor( pt, eta, phi )
+```
+from TauAnalysisTools.TauTriggerSFs.getTauTriggerSFs import getTauTriggerSFs
+tauSFs = getTauTriggerSFs('ditau', 2017, 'tight', 'MVAv2')
+```
 
-Additionally, if one needs the trigger efficiencies and not the SFs you can grab them as well. The trigger efficiencies will have the eta-phi adjustment already applied to them.
-   * getDiTauEfficiencyData( pt, eta, phi )
-   * getDiTauEfficiencyMC( pt, eta, phi )
-   * getETauEfficiencyData( pt, eta, phi )
-   * getETauEfficiencyMC( pt, eta, phi )
-   * getMuTauEfficiencyData( pt, eta, phi )
-   * getMuTauEfficiencyMC( pt, eta, phi )
+This class has a single methods to return the trigger SF for the triggers mentioned above. Additionally, this same function can be called with a 5th agrument requesting the shifted SF which represents a +/- 1 sigma shift in the fit function uncertainty:
+   * getTriggerScaleFactor( pt, eta, phi, decayMode )
+   * getTriggerScaleFactor( pt, eta, phi, decayMode, 'Up' )
+   * getTriggerScaleFactor( pt, eta, phi, decayMode, 'Down' )
 
-There are currently no fits applied in this Git area. Fits will be considered for the final round of trigger SFs. Currently, "getTauTriggerSFs" fetches the efficiency of Data and MC from the associated bin value in TGraphAsymmErrors turned into TH1s for simplicity of access.
+```
+nominal_sf = tauSFs.getTriggerScaleFactor( tau.pt(), tau.eta(), tau.phi(), tau.decayMode() ) )
+sf_up      = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(), tau.decayMode(), 'Up' ) )
+sf_down    = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(), tau.decayMode(), 'Down' ) )
+```
 
-It is found that there is a slight barrel vs. end cap difference in tau trigger performance. To account for this, there are additional eta-phi adjustments made to the delivered SFs from "getTauTriggerSFs". In additional to the barrel / end cap separation, we isolate a specific region in the barrel which had well known issues with deal pixel modules and varying tau reconstruction during 2017 data taking (0 < eta < 1.5, phi > 2.8). The eta-phi adjustements are provided in a json file: data/tauTriggerEfficienciesEtaPhiMap2017.json and are applied by default in "getTauTriggerSFs".
+Additionally, if one needs the trigger efficiencies and not the SFs you can grab them as well. The trigger efficiencies will have the eta-phi adjustment already applied to them. There are additionally extra functions for the uncertainty shifts.
+   * getTriggerEfficiencyData( pt, eta, phi, dm )
+   * getTriggerEfficiencyDataUncertUp( pt, eta, phi, dm )
+   * getTriggerEfficiencyDataUncertDown( pt, eta, phi, dm )
+   * getTriggerEfficiencyMC( pt, eta, phi, dm )
+   * getTriggerEfficiencyMCUncertUp( pt, eta, phi, dm )
+   * getTriggerEfficiencyMCUncertDown( pt, eta, phi, dm )
+
+It is found that there is a slight barrel vs. end cap difference in tau trigger performance. To account for this, there are additional eta-phi adjustments made to the delivered SFs from `getTauTriggerSFs`. In additional to the barrel / end cap separation, we isolate a specific region in the barrel which had well known issues with deal pixel modules and varying tau reconstruction during 2017 data taking (0 < eta < 1.5, phi > 2.8). The eta-phi adjustements are provided in as TH2s in the main root file `data/data/tauTriggerEfficiencies2017.root` and are applied by default in `getTauTriggerSFs`.
 
 
 # Example Code
-For analysis using Tau MVA dR0p3 ID using Tight WP:
+For analysis using Tau MVAv2 dR0p5 ID using Tight WP:
 ```
-tauSFs = getTauTriggerSFs('tight', 'dR0p3')
-diTauLeg1SF = tauSFs.getDiTauScaleFactor( pt1, eta1, phi1 )
-diTauLeg2SF = tauSFs.getDiTauScaleFactor( pt2, eta2, phi2 )
-```
-For analysis using Tau MVA dR0p5 ID using Tight WP:
-```
-tauSFs = getTauTriggerSFs('tight', 'MVA')
+from TauAnalysisTools.TauTriggerSFs.getTauTriggerSFs import getTauTriggerSFs
+tauSFs = getTauTriggerSFs('ditau', 2017, 'tight', 'MVAv2')
+
+nominal_sf = tauSFs.getTriggerScaleFactor( tau.pt(), tau.eta(), tau.phi(), tau.decayMode() ) )
+sf_up      = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(), tau.decayMode(), 'Up' ) )
+sf_down    = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(), tau.decayMode(), 'Down' ) )
 ```
 
 # For Detailed Trigger Uncertainty Studies
 
-The original efficiency TGraphAsymmErrors for the efficiencies are stored as RooHists in case people would like direct access to the most proper description of the uncertainties for each bin. The TGraphAsymmErrors --> TH1 process does not preserve proper uncertainties, this is why both are provided.
+Please contact the Tau POG trigger experts who can help point you towards the original NTuples used to make the fits and TGraphAsymmErrors distributions.
 
 # For Recreating Efficiency ROOT File for Other Years
 

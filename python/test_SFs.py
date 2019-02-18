@@ -106,23 +106,14 @@ p = ROOT.TPad('p','p',0,0,1,1)
 p.Draw()
 p.cd()
 
-for trigger in ['ditau',]:# 'mutau', 'etau'] :
-    #for tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] :
-    for tauWP in ['vloose', 'medium', 'vvtight'] :
-        tauSFs = getTauTriggerSFs('ditau', 2017, tauWP, 'MVAv2')
-        make_plots( tauSFs, 'ditau', 0 )
-        make_plots( tauSFs, 'ditau', 1 )
-        make_plots( tauSFs, 'ditau', 10 )
-        del tauSFs
-        tauSFs = getTauTriggerSFs('etau', 2017, tauWP, 'MVAv2')
-        make_plots( tauSFs, 'etau', 0 )
-        make_plots( tauSFs, 'etau', 1 )
-        make_plots( tauSFs, 'etau', 10 )
-        del tauSFs
-        tauSFs = getTauTriggerSFs('mutau', 2017, tauWP, 'MVAv2')
-        make_plots( tauSFs, 'mutau', 0 )
-        make_plots( tauSFs, 'mutau', 1 )
-        make_plots( tauSFs, 'mutau', 10 )
+for trigger in ['ditau', 'mutau', 'etau'] :
+    for tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] :
+    #for tauWP in ['vvtight',] :
+    #for tauWP in ['vloose', 'medium', 'vvtight'] :
+        tauSFs = getTauTriggerSFs(trigger, 2017, tauWP, 'MVAv2')
+        make_plots( tauSFs, trigger, 0 )
+        make_plots( tauSFs, trigger, 1 )
+        make_plots( tauSFs, trigger, 10 )
         del tauSFs
 
 
