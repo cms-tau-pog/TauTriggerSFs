@@ -24,7 +24,9 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
 
 Original efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2018 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
 
-Update SFs are provided on the 31Mar2018 ReReco data.
+Updated MCv2 uncertainties with MVAv2 presented in August 2018: https://indico.cern.ch/event/749815/contributions/3104487/attachments/1700196/2737887/Ruggles_TauTriggers_TauPOG_20180813_v1.pdf
+
+*Most Current Results* Updated SFs are provided including the analytic fit and uncertainties February 2019: https://indico.cern.ch/event/799374/contributions/3323191/attachments/1797874/2931506/TauTrigger2017SFv3_TauID_hsert.pdf
 
 # Trigger Efficiency / SF Fit and Uncertainties
 
