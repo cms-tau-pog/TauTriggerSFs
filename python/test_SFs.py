@@ -96,7 +96,7 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
     leg.Draw('same')
     g.SetTitle( '%s, type: %s, WP: %s' % (name, wp, tauWP) )
     p.Update()
-    c.SaveAs('/afs/cern.ch/user/t/truggles/www/tauSFs/Feb16_new_SFs/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
+    c.SaveAs('/afs/cern.ch/user/t/truggles/www/tauSFs/Feb19_new_SFs/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
 
     del sfs, sfs2, sfs3, g, g2, g3, mg
 

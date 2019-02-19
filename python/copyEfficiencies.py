@@ -14,7 +14,7 @@ from TauAnalysisTools.TauTriggerSFs.helpers import getHist, getGraph, getFit
 
 print "Making initial SF file"
 
-iFile = ROOT.TFile( '/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/tauTriggerEfficiencies2017_final_perDM_v2.root', 'r' )
+iFile = ROOT.TFile( '/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/tauTriggerEfficiencies2017_final_perDM_v3.root', 'r' )
 
 oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2017_FINAL.root', 'RECREATE' )
 oFile.cd()
