@@ -117,7 +117,8 @@ class getTauTriggerSFs :
             print "Returning efficiency = 0.0"
             return 0.0
         eff *= etaPhiVal / etaPhiAvg
-        if eff > 1. : eff = 1
+        if eff > 1. : eff = 1.
+        if eff < 0. : eff = 0. # Some efficiency fits go negative at very low tau pT, prevent that.
         return eff
 
 
