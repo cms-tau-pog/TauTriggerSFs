@@ -91,6 +91,11 @@ class getTauTriggerSFs :
         elif pt < 20 : pt = 20
         return pt
 
+    # Make sure to have only old DMs, DM0, DM1, DM10
+    def dmCheck( self, dm ) :
+        if dm == 2 : dm = 1   # Originally, DM=2 was included in oldDM, but with the dynamic strip clustering the second strip was reconstructed together with the first one. So it ends up to DM=1. But, there are still some cases where DM=2 survives.
+        return dm
+
     def getEfficiency( self, pt, eta, phi, fit, uncHist, etaPhiHist, etaPhiAvgHist, uncert='Nominal' ) :
         pt = self.ptCheck( pt )
         eff = fit.Eval( pt )
@@ -124,14 +129,17 @@ class getTauTriggerSFs :
 
     # return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyData( self, pt, eta, phi, dm ) :
+        dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ])
     def getTriggerEfficiencyDataUncertUp( self, pt, eta, phi, dm ) :
+        dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Up' )
     def getTriggerEfficiencyDataUncertDown( self, pt, eta, phi, dm ) :
+        dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Down' )
@@ -139,14 +147,17 @@ class getTauTriggerSFs :
 
     # return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyMC( self, pt, eta, phi, dm ) :
+        dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ])
     def getTriggerEfficiencyMCUncertUp( self, pt, eta, phi, dm ) :
+        dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Up' )
     def getTriggerEfficiencyMCUncertDown( self, pt, eta, phi, dm ) :
+        dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Down' )
@@ -155,6 +166,7 @@ class getTauTriggerSFs :
     # return the data/MC scale factor
     def getTriggerScaleFactor( self, pt, eta, phi, dm ) :
         pt = self.ptCheck( pt )
+        dm = self.dmCheck( dm )
         effData = self.getTriggerEfficiencyData( pt, eta, phi, dm )
         effMC = self.getTriggerEfficiencyMC( pt, eta, phi, dm )
         if effMC < 1e-5 :
@@ -175,7 +187,7 @@ class getTauTriggerSFs :
     def getTriggerScaleFactorUncert( self, pt, eta, phi, dm, uncert ) :
         assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
         pt = self.ptCheck( pt )
-
+        dm = self.dmCheck( dm )
         effData = self.getTriggerEfficiencyData( pt, eta, phi, dm )
         effDataDown = self.getTriggerEfficiencyDataUncertDown( pt, eta, phi, dm )
         relDataDiff = (effData - effDataDown) / effData
