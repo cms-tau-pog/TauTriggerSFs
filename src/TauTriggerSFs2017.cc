@@ -90,24 +90,31 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   fitUncMCMap_ [10] = loadTH1(inputFile_, Form("%s_%s%s_dm10_MC_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
 
 
+
+  // Because of low statistics in the problem region of the barrel, we apply the Eta-Phi corrections
+  // based on taus passing the vloose MVA WP. This provides the most statistically robust measurement
+  // for the correction. Considering the three Eta-Phi regions should not have significantly different
+  // SF adjustments for different MVA WPs, this should also be a safe choice.
+  std::string etaPhiWP = "vloose";
+
   // Load the TH2s containing the eta phi efficiency corrections
   // This is done per decay mode: 0, 1, 10.
-  effEtaPhiDataMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_DATA", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiDataMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_DATA", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiDataMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_DATA", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_MC", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_MC", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_MC", trigger_.data(), tauWP_.data(), wpType_.data()));
+  effEtaPhiDataMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_DATA", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiDataMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_DATA", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiDataMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_DATA", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_MC", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_MC", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_MC", trigger_.data(), etaPhiWP.data(), wpType_.data()));
 
 
   // Eta Phi Averages
   // This is done per decay mode: 0, 1, 10.
-  effEtaPhiAvgDataMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_DATA_AVG", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiAvgDataMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_DATA_AVG", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiAvgDataMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_DATA_AVG", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiAvgMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_MC_AVG", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiAvgMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_MC_AVG", trigger_.data(), tauWP_.data(), wpType_.data()));
-  effEtaPhiAvgMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_MC_AVG", trigger_.data(), tauWP_.data(), wpType_.data()));
+  effEtaPhiAvgDataMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_DATA_AVG", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiAvgDataMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_DATA_AVG", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiAvgDataMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_DATA_AVG", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiAvgMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_MC_AVG", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiAvgMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_MC_AVG", trigger_.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiAvgMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_MC_AVG", trigger_.data(), etaPhiWP.data(), wpType_.data()));
 }
 
 
