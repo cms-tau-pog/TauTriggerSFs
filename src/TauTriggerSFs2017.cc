@@ -1,4 +1,4 @@
-#include "../interface/TauTriggerSFs2017.h"
+#include "TauTriggerSFs2017/TauTriggerSFs2017/interface/TauTriggerSFs2017.h"
 
 #include <TString.h> // Form
 
