@@ -62,33 +62,33 @@ class getTauTriggerSFs :
         
 
         # Because of low statistics in the problem region of the barrel, we apply the Eta-Phi corrections
-        # based on taus passing the vloose MVA WP. This provides the most statistically robust measurement
+        # based on taus firing mutau trigger and passing the vloose MVA WP. This provides the most statistically robust measurement
         # for the correction. Considering the three Eta-Phi regions should not have significantly different
         # SF adjustments for different MVA WPs, this should also be a safe choice.
         etaPhiWP = 'vloose'
-
+        etaPhiTrigger = 'mutau'
         # Load the TH2s containing the eta phi efficiency corrections
         # This is done per decay mode: 0, 1, 10.
         self.effEtaPhiDataMap = {}
         self.effEtaPhiMCMap = {}
-        self.effEtaPhiDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC' % (self.trigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC' % (etaPhiTrigger, etaPhiWP, self.wpType) )
 
 
         # Eta Phi Averages
         # This is done per decay mode: 0, 1, 10.
         self.effEtaPhiAvgDataMap = {}
         self.effEtaPhiAvgMCMap = {}
-        self.effEtaPhiAvgDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA_AVG' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiAvgDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA_AVG' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiAvgDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA_AVG' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiAvgMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC_AVG' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiAvgMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_AVG' % (self.trigger, etaPhiWP, self.wpType) )
-        self.effEtaPhiAvgMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_AVG' % (self.trigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiAvgDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA_AVG' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiAvgDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA_AVG' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiAvgDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA_AVG' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiAvgMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC_AVG' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiAvgMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_AVG' % (etaPhiTrigger, etaPhiWP, self.wpType) )
+        self.effEtaPhiAvgMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_AVG' % (etaPhiTrigger, etaPhiWP, self.wpType) )
 
 
     # Make sure we stay on our histograms
