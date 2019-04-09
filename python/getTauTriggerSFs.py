@@ -62,9 +62,9 @@ class getTauTriggerSFs :
         
 
         # Because of low statistics in the problem region of the barrel, we apply the Eta-Phi corrections
-        # based on taus firing mutau trigger and passing the vloose MVA WP. This provides the most statistically robust measurement
-        # for the correction. Considering the three Eta-Phi regions should not have significantly different
-        # SF adjustments for different MVA WPs, this should also be a safe choice.
+        # based on taus firing mutau trigger and passing the vloose MVA WP. This provides the most statistically
+        # robust measurement for the correction. Considering the three Eta-Phi regions should not have significantly
+        # different SF adjustments for different MVA WPs, this should also be a safe choice.
         etaPhiWP = 'vloose'
         etaPhiTrigger = 'mutau'
         # Load the TH2s containing the eta phi efficiency corrections
