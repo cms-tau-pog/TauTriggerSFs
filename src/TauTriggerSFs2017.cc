@@ -165,7 +165,7 @@ double getEfficiency(double pt, double eta, double phi, const TF1* fit, const TH
 
 
 // Return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
-double TauTriggerSFs2017::getTriggerEfficiencyData(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerEfficiencyData(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
   if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
@@ -176,7 +176,7 @@ double TauTriggerSFs2017::getTriggerEfficiencyData(double pt, double eta, double
   return getEfficiency(pt, eta, phi, fitDataMap_.at(dm_checked), fitUncDataMap_.at(dm_checked), effEtaPhiDataMap_.at(dm_checked), effEtaPhiAvgDataMap_.at(dm_checked));
 }
 
-double TauTriggerSFs2017::getTriggerEfficiencyDataUncertUp(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerEfficiencyDataUncertUp(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
   if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
@@ -187,7 +187,7 @@ double TauTriggerSFs2017::getTriggerEfficiencyDataUncertUp(double pt, double eta
   return getEfficiency(pt, eta, phi, fitDataMap_.at(dm_checked), fitUncDataMap_.at(dm_checked), effEtaPhiDataMap_.at(dm_checked), effEtaPhiAvgDataMap_.at(dm_checked), "Up");
 }
 
-double TauTriggerSFs2017::getTriggerEfficiencyDataUncertDown(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerEfficiencyDataUncertDown(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
   if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
@@ -200,7 +200,7 @@ double TauTriggerSFs2017::getTriggerEfficiencyDataUncertDown(double pt, double e
 
 
 // Return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
-double TauTriggerSFs2017::getTriggerEfficiencyMC(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerEfficiencyMC(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
   if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
@@ -211,7 +211,7 @@ double TauTriggerSFs2017::getTriggerEfficiencyMC(double pt, double eta, double p
   return getEfficiency(pt, eta, phi, fitMCMap_.at(dm_checked), fitUncMCMap_.at(dm_checked), effEtaPhiMCMap_.at(dm_checked), effEtaPhiAvgMCMap_.at(dm_checked));
 }
 
-double TauTriggerSFs2017::getTriggerEfficiencyMCUncertUp(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerEfficiencyMCUncertUp(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
   if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
@@ -222,7 +222,7 @@ double TauTriggerSFs2017::getTriggerEfficiencyMCUncertUp(double pt, double eta, 
   return getEfficiency(pt, eta, phi, fitMCMap_.at(dm_checked), fitUncMCMap_.at(dm_checked), effEtaPhiMCMap_.at(dm_checked), effEtaPhiAvgMCMap_.at(dm_checked), "Up");
 }
 
-double TauTriggerSFs2017::getTriggerEfficiencyMCUncertDown(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerEfficiencyMCUncertDown(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
   if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
@@ -235,7 +235,7 @@ double TauTriggerSFs2017::getTriggerEfficiencyMCUncertDown(double pt, double eta
 
 
 // Return the data/MC scale factor
-double TauTriggerSFs2017::getTriggerScaleFactor(double pt, double eta, double phi, int dm)
+double TauTriggerSFs2017::getTriggerScaleFactor(double pt, double eta, double phi, int dm) const
 {
   double pt_checked = ptCheck( pt );
   int dm_checked = dmCheck( dm );
@@ -259,7 +259,7 @@ double TauTriggerSFs2017::getTriggerScaleFactor(double pt, double eta, double ph
 // for simple division. Using getTriggerEfficiencyXXXUncertDown instead
 // of Up ensures we have the full uncertainty reported. Up sometimes
 // is clipped by efficiency max of 1.0.
-double TauTriggerSFs2017::getTriggerScaleFactorUncert(double pt, double eta, double phi, int dm, std::string uncert)
+double TauTriggerSFs2017::getTriggerScaleFactorUncert(double pt, double eta, double phi, int dm, const std::string& uncert) const
 {
   if ( (uncert!="Up") && (uncert!="Down") )
   {
