@@ -4,9 +4,7 @@ For the current best tau trigger scale factors for 2017 data and MC do:
 ```
 cd $CMSSW_BASE/src
 mkdir TauAnalysisTools
-pushd TauAnalysisTools
-git clone -b final_2017_MCv2 git@github.com:cms-tau-pog/TauTriggerSFs.git TauTriggerSFs
-popd
+git clone -b final_2017_MCv2 https://github.com/cms-tau-pog/TauTriggerSFs $CMSSW_BASE/src/TauAnalysisTools/TauTriggerSFs
 scram b -j 8
 ```
 The c++ interface require you to scram b after checkout. If you do not place the code in the above hierarchy within CMSSW
