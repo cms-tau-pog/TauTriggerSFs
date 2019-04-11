@@ -1,14 +1,16 @@
 # Checkout Instructions
 
-For the current best tau trigger scale factors for 2017 data and MC, after checking out a fresh CMSSW release:
+For the final tau trigger scale factors for 2017 data and MC, please go to ```final_2017_MCv2``` branch and follow the instructions given there!
+
+For the tau trigger scale factors for 2017 data and MC in pt-binned version released in August 2018, please use ```master``` branch and follow the instructions given here:
+ 
 ```
-mkdir TauTriggerSFs2017
-pushd TauTriggerSFs2017
-git clone -b tauTriggers2017_reMiniaod_test git@github.com:truggles/TauTriggerSFs2017.git
-popd
+cd $CMSSW_BASE/src
+mkdir TauAnalysisTools
+git clone -b master https://github.com/cms-tau-pog/TauTriggerSFs.git $CMSSW_BASE/src/TauAnalysisTools/TauTriggerSFs
 scram b -j 8
 ```
-For use in CMSSW, it is best if you keep the directory structure `${CMSSW_BASE}/src/TauTriggerSFs2017/TauTriggerSFs2017`.
+For use in CMSSW, it is best if you keep the directory structure `${CMSSW_BASE}/src/TauAnalysisTools/TauTriggerSFs`.
 For additional details on using the c++ interface see below section on c++
 
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
@@ -23,7 +25,11 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
       * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
       * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
 
-The efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2017 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf
+Original efficiencies and SF are measured on Full 2017 Data with 42 1/fb using SingleMuon dataset of 17Nov2017 ReReco samples. Further details can be found in Tau POG presentations such as: https://indico.cern.ch/event/700042/contributions/2871830/attachments/1591232/2527113/180129_TauPOGmeeting_TriggerEfficiency_hsert.pdf (***Outdated!***)
+
+Updated MCv2 efficiencies and SFs with MVAv2 presented in August 2018: https://indico.cern.ch/event/749815/contributions/3104487/attachments/1700196/2737887/Ruggles_TauTriggers_TauPOG_20180813_v1.pdf. These efficiencies and SFs can be found in ```master``` branch.
+
+Most Current Results Updated SFs are provided including the analytic fit and uncertainties in February 2019: https://indico.cern.ch/event/799374/contributions/3323191/attachments/1797874/2931826/TauTrigger2017SFv3_TauID_hsert.pdf. To access those SFs, please go to ```final_2017_MCv2``` branch and see the README file there for detailed instructions.
 
 # Accessing the Efficiencies and SFs
 
