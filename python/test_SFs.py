@@ -4,6 +4,9 @@ from TauAnalysisTools.TauTriggerSFs.getTauTriggerSFs import getTauTriggerSFs
 from array import array
 
 
+# choose which year's eta-phi files to make!
+year2017 = False
+year2018 = True
 
 def build_legend( graphs ) :
     legend = ROOT.TLegend(0.50, 0.7, 0.90, 0.9)
@@ -40,16 +43,28 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
     sfs3B = array('d', [])
 
     for pt in range( min_, 200 ) :
-        pts.append( pt )
-        sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
-        sfsA.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' ) )
-        sfsB.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Down' ) )
-        sfs2.append( tauSFs.getTriggerScaleFactor( pt, 2.0, 0.0, dm ) )
-        sfs2A.append( tauSFs.getTriggerScaleFactorUncert( pt, 2.0, 0.0, dm, 'Up' ) )
-        sfs2B.append( tauSFs.getTriggerScaleFactorUncert( pt, 2.0, 0.0, dm, 'Down' ) )
-        sfs3.append( tauSFs.getTriggerScaleFactor( pt, 1.0, 2.9, dm ) )
-        sfs3A.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Up' ) )
-        sfs3B.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Down' ) )
+        if(year2017):
+            pts.append( pt )
+            sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
+            sfsA.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' ) )
+            sfsB.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Down' ) )
+            sfs2.append( tauSFs.getTriggerScaleFactor( pt, 2.0, 0.0, dm ) )
+            sfs2A.append( tauSFs.getTriggerScaleFactorUncert( pt, 2.0, 0.0, dm, 'Up' ) )
+            sfs2B.append( tauSFs.getTriggerScaleFactorUncert( pt, 2.0, 0.0, dm, 'Down' ) )
+            sfs3.append( tauSFs.getTriggerScaleFactor( pt, 1.0, 2.9, dm ) )
+            sfs3A.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Up' ) )
+            sfs3B.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Down' ) )
+        elif(year2018):
+            pts.append( pt )
+            sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
+            sfsA.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' ) )
+            sfsB.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Down' ) )
+            sfs2.append( tauSFs.getTriggerScaleFactor( pt, 2.0, 0.0, dm ) )
+            sfs2A.append( tauSFs.getTriggerScaleFactorUncert( pt, 2.0, 0.0, dm, 'Up' ) )
+            sfs2B.append( tauSFs.getTriggerScaleFactorUncert( pt, 2.0, 0.0, dm, 'Down' ) )
+            sfs3.append( tauSFs.getTriggerScaleFactor( pt, -2.0, -1.5, dm ) )
+            sfs3A.append( tauSFs.getTriggerScaleFactorUncert( pt, -2.0, -1.5, dm, 'Up' ) )
+            sfs3B.append( tauSFs.getTriggerScaleFactorUncert( pt, -2.0, -1.5, dm, 'Down' ) )
 
     g = ROOT.TGraph( len(pts), pts, sfs )
     gA = ROOT.TGraph( len(pts), pts, sfsA )
@@ -63,9 +78,14 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
     g.SetLineWidth( 2 )
     g2.SetLineWidth( 2 )
     g3.SetLineWidth( 2 )
-    g.SetTitle( 'Barrel' )
-    g2.SetTitle( 'End Cap' )
-    g3.SetTitle( 'Barrel, Pixel Region' )
+    if(year2017):
+        g.SetTitle( 'Barrel' )
+        g2.SetTitle( 'End Cap' )
+        g3.SetTitle( 'Barrel, Pixel Region' )
+    elif(year2018):
+        g.SetTitle( 'Barrel' )
+        g2.SetTitle( 'End Cap' )
+        g3.SetTitle( 'End Cap, HCAL Region' )
     g2.SetLineColor(ROOT.kRed)
     g2A.SetLineColor(ROOT.kRed)
     g2B.SetLineColor(ROOT.kRed)
@@ -96,7 +116,7 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
     leg.Draw('same')
     g.SetTitle( '%s, type: %s, WP: %s' % (name, wp, tauWP) )
     p.Update()
-    c.SaveAs('test_plots/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
+    c.SaveAs('testPlots_07May2019/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
 
     del sfs, sfs2, sfs3, g, g2, g3, mg
 
@@ -110,7 +130,8 @@ for trigger in ['ditau', 'mutau', 'etau'] :
     for tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] :
     #for tauWP in ['vvtight',] :
     #for tauWP in ['vloose', 'medium', 'vvtight'] :
-        tauSFs = getTauTriggerSFs(trigger, 2017, tauWP, 'MVAv2')
+        if(year2017): tauSFs = getTauTriggerSFs(trigger, 2017, tauWP, 'MVAv2')
+        elif(year2018): tauSFs = getTauTriggerSFs(trigger, 2018, tauWP, 'MVAv2')
         make_plots( tauSFs, trigger, 0 )
         make_plots( tauSFs, trigger, 1 )
         make_plots( tauSFs, trigger, 10 )

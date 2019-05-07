@@ -7,6 +7,10 @@ ROOT.gROOT.SetBatch(True)
 import json
 from array import array
 
+# choose which year's eta-phi ROOT files to make!
+year2017 = False
+year2018 = True
+
 # "Average" : 0.5485,
 # "NonPixelProblemBarrel" : 0.5570,
 # "EndCap" : 0.5205,
@@ -27,6 +31,23 @@ def fillH2( trigger, wp, dm, sample, info_map, h2 ) :
                 h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "PixelProblemBarrel" ] )
             else :
                 print "Didn't we cover all the values?",x,y
+
+def fillH2_2018( trigger, wp, dm, sample, info_map, h2 ) :
+    print "Filling: ",h2
+    for x in range( 1, h2.GetXaxis().GetNbins()+1 ) :
+        for y in range( 1, h2.GetYaxis().GetNbins()+1 ) :
+            #print x,y
+            if x == 1 or x == 6 : # beyond eta range, abs(eta)>2.1
+                h2.SetBinContent( x, y, 0.0 )
+            elif x == 2  and y == 2 : # end cap, broken HCAL modules region, 1.5< eta <2.1 and -1.6 < phi< -0.8
+                h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "HCALProblemEndCap" ] )
+            elif((x == 2  and y !=2) or x == 5) : # end cap rest
+                h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "NonHCALProblemEndCap" ] )
+            elif x == 3 or x == 4 : # barrel
+                h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "Barrel" ] )
+            else :
+                print "Didn't we cover all the values?",x,y
+
         
 def fillAvgH2( trigger, wp, dm, sample, info_map, h2 ) :
     print "Filling: ",h2
@@ -41,9 +62,12 @@ def fillAvgH2( trigger, wp, dm, sample, info_map, h2 ) :
                 print "Didn't we cover all the values?",x,y
 
 
-
-with open('data/tauTriggerEfficienciesEtaPhiMap2017_FINAL.json') as etaPhiInfo :
-    info_map = json.load( etaPhiInfo )
+if(year2017):
+	with open('data/tauTriggerEfficienciesEtaPhiMap2017_FINAL.json') as etaPhiInfo :
+		info_map = json.load( etaPhiInfo )
+elif(year2018):
+	with open('data/tauTriggerEfficienciesEtaPhiMap2018_pre.json') as etaPhiInfo :
+		info_map = json.load( etaPhiInfo )
 
 print "Making Eta Phi Map"
 #saveDir = '/afs/cern.ch/user/t/truggles/www/tau_fits_Feb13v2/'
@@ -53,12 +77,19 @@ print "Making Eta Phi Map"
 #p.SetLeftMargin( ROOT.gPad.GetLeftMargin() * 1.5 )
 #p.SetRightMargin( ROOT.gPad.GetRightMargin() * 1.5 )
 #p.Draw()
-
-oFile = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2017_FINAL.root', 'RECREATE' )
-oFile.cd()
+if(year2017):
+	oFile = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2017_FINAL.root', 'RECREATE' )
+	oFile.cd()
+elif(year2018):
+	oFile = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2018_pre.root', 'RECREATE' )
+	oFile.cd()
 
 xBinning = array('f', [-2.5, -2.1, -1.5, 0, 1.5, 2.1, 2.5] )
-yBinning = array('f', [-3.2, 2.8, 3.2] )
+if(year2017):
+	yBinning = array('f', [-3.2, 2.8, 3.2] )
+elif(year2018):
+	yBinning = array('f', [-3.2, -1.6, -0.8, 3.2] )
+
 xBinningAvg = array('f', [-2.5, -2.1, 2.1, 2.5] )
 yBinningAvg = array('f', [-3.2, 3.2] )
 
@@ -70,11 +101,14 @@ for trigger in ['ditau', 'etau', 'mutau'] :
             h_mc = ROOT.TH2F( '%s_%sMVAv2_%s_MC' % (trigger, wp, dm), '%s_%sMVAv2_%s_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
 
             h_data_avg = ROOT.TH2F( '%s_%sMVAv2_%s_DATA_AVG' % (trigger, wp, dm), '%s_%sMVAv2_%s_AVG_DATA;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg) 
-            h_mc_avg = ROOT.TH2F( '%s_%sMVAv2_%s_MC_AVG' % (trigger, wp, dm), '%s_%sMVAv2_%s_AVG_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg) 
+            h_mc_avg = ROOT.TH2F( '%s_%sMVAv2_%s_MC_AVG' % (trigger, wp, dm), '%s_%sMVAv2_%s_AVG_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinningAvg)-1, xBinningAvg, len(yBinningAvg)-1, yBinningAvg)
 
-
-            fillH2( trigger, wp, dm, 'data', info_map, h_data )
-            fillH2( trigger, wp, dm, 'mc', info_map, h_mc )
+            if(year2017):
+                fillH2( trigger, wp, dm, 'data', info_map, h_data )
+                fillH2( trigger, wp, dm, 'mc', info_map, h_mc )
+            elif(year2018):
+                fillH2_2018( trigger, wp, dm, 'data', info_map, h_data )
+                fillH2_2018( trigger, wp, dm, 'mc', info_map, h_mc )
 
             fillAvgH2( trigger, wp, dm, 'data', info_map, h_data_avg )
             fillAvgH2( trigger, wp, dm, 'mc', info_map, h_mc_avg )

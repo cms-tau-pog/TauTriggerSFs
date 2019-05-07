@@ -29,7 +29,7 @@ class getTauTriggerSFs :
         assert( self.tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] ), "You must choose a WP from: vloose, loose, medium, tight, vtight, or vvtight"
         assert( self.wpType in ['MVAv2', 'dR0p3'] ), "Choose from two provided ID types: 'MVAv2', 'dR0p3'. 'MVAv2' uses dR0p5, and 'dR0p3' is also an MVA-based ID."
         assert( self.wpType == 'MVAv2' ), "Tau POG is currently only providing efficiencies for MVAv2, sorry."
-        assert( self.year == 2017 ), "Only 2017 trigger efficiencies currently provided in this tool. Stay tuned..."
+        assert( self.year in [2017, 2018] ), "Choose which year trigger efficiencies you need."
         print "Loading Efficiencies for trigger %s usingTau %s ID WP %s for year %i" % (self.trigger, self.wpType, self.tauWP, self.year)
 
         # Assume this is in CMSSW with the below path structure
