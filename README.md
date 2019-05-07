@@ -1,14 +1,36 @@
 # Checkout Instructions
 
-For the current best tau trigger scale factors for 2017 data and MC do:
+For the current tau trigger scale factors for 2018 data and MC do:
 ```
 cd $CMSSW_BASE/src
 mkdir TauAnalysisTools
-git clone -b final_2017_MCv2 https://github.com/cms-tau-pog/TauTriggerSFs $CMSSW_BASE/src/TauAnalysisTools/TauTriggerSFs
+git clone -b pre_2018_MCv2 https://github.com/cms-tau-pog/TauTriggerSFs $CMSSW_BASE/src/TauAnalysisTools/TauTriggerSFs
 scram b -j 8
 ```
+This branch includes the final 2017 SFs too.
+
 The c++ interface require you to scram b after checkout. If you do not place the code in the above hierarchy within CMSSW
 the python paths are not guaranteed to work.
+
+
+# Tau Trigger Scale Factor Tool for 2018 Data & MC
+
+Tau trigger SFs can be derived from the root file containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies2018.root` :
+   * Mu+Tau Cross Trigger:
+      * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1,   for Run < 317509
+      * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau**HPS**27_eta2p1_CrossL1,  for Run >= 317509
+
+   * Elec+Tau Cross Trigger:
+      * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1, for Run < 317509
+      * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau**HPS**30_eta2p1_CrossL1,  for Run >= 317509
+
+   * di-Tau Triggers: OR of all fully enabled triggers in 2017 data for Run < 317509 before HPS tau reconstruction is deployed, and use the single ditau trigger for Run >= 317509 after HPS is deployed
+      * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg, for Run < 317509
+      * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+      * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
+      * HLT_DoubleMediumChargedIsoPFTau**HPS**35_Trk1_eta2p1_Reg,  for Run >= 317509
+
+Efficiencies and SF are measured on Full 2018 Data with 59.6 1/fb using SingleMuon dataset of 17Sep18 ReReco samples from RunA to RunC and of PromptReco samples for RunD. 
 
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
 
@@ -28,6 +50,7 @@ Updated MCv2 uncertainties with MVAv2 presented in August 2018: https://indico.c
 
 *Most Current Results* Updated SFs are provided including the analytic fit and uncertainties February 2019: https://indico.cern.ch/event/799374/contributions/3323191/attachments/1797874/2931826/TauTrigger2017SFv3_TauID_hsert.pdf
 
+
 # Trigger Efficiency / SF Fit and Uncertainties
 
 Starting with the 2017 dataset, we are attempting to provide trigger efficiency uncertainties based on the results of the analytic fit of the TGraphAsymmErrors. The fit function is a modified CrystalBall CDF: `fit = ROOT.TF1('fit', '[5] - ROOT::Math::crystalball_cdf(-x, [0], [1], [2], [3])*([4])')`. 
@@ -39,7 +62,7 @@ Application of the efficiency and SF uncertainties should be considered _EXPERIM
 
 A helper class, `getTauTriggerSFs`, in `python/getTauTriggerSFs.py` can be used. It should be initialized with:
    * the desired trigger: `ditau`, `mutau`, `etau`
-   * the data year: 2017 as an int (currently on 2017 provided)
+   * the data year: `2017`, `2018` as an int
    * the WP being used: `vloose`, `loose`, `medium`, `tight`, `vtight`, and `vvtight` (`vvloose` is not supported by the Tau POG)
    * the desired Tau ID type: `MVAv2` which uses dR0p5. The `dR0p3` WPs are not supported currently.
 
