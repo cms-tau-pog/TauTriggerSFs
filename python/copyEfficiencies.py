@@ -23,15 +23,15 @@ if(year2017):
 	oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2017_FINAL.root', 'RECREATE' )
 	oFile.cd()
 elif(year2018):
-	iFile = ROOT.TFile( '/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/tauTriggerFitResults2018_pre.root', 'r' )
+	iFile = ROOT.TFile( '/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/tauTriggerFitResults_2018.root', 'r' )
 
-	oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2018_pre.root', 'RECREATE' )
+	oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2018_copied.root', 'RECREATE' )
 	oFile.cd()
 
 
 # Supporting 2017 MVAv2 only
 for trigger in ['ditau', 'mutau', 'etau'] :
-    for wp in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] : # No VVLoose
+    for wp in ['vvloose','vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] : # No VVLoose
         for dm in ['dm0', 'dm1', 'dm10'] :
             for sample in ['DATA', 'MC'] :
                 iName2017 = trigger+'_XXX_'+dm+'_'+wp+'TauMVA_'+sample
