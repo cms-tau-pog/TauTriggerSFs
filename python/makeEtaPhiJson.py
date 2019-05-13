@@ -37,12 +37,12 @@ def get_hist_2d( name, tree, cut, weight, x_var, y_var, xBinning, yBinning ) :
 def printJson( to_dump ) :
 	if(year2017):
             with open('data/tauTriggerEfficienciesEtaPhiMap2017_FINAL.json', 'w') as outFile :
-            json.dump( to_dump, outFile, indent=2 )
-            outFile.close()
+                json.dump( to_dump, outFile, indent=2 )
+                outFile.close()
         elif(year2018):
             with open('data/tauTriggerEfficienciesEtaPhiMap2018_pre.json', 'w') as outFile :
-            json.dump( to_dump, outFile, indent=2 )
-            outFile.close()
+                json.dump( to_dump, outFile, indent=2 )
+                outFile.close()
 
 def get_2017trigger_map() :
 
