@@ -1,13 +1,12 @@
 # Checkout Instructions
 
-For the current tau trigger scale factors for 2018 data and MC do:
+For the current tau trigger scale factors for 2018, 2017 data and MC do:
 ```
 cd $CMSSW_BASE/src
 mkdir TauAnalysisTools
-git clone -b pre_2018_MCv2 https://github.com/cms-tau-pog/TauTriggerSFs $CMSSW_BASE/src/TauAnalysisTools/TauTriggerSFs
+git clone -b run2_SFs https://github.com/cms-tau-pog/TauTriggerSFs $CMSSW_BASE/src/TauAnalysisTools/TauTriggerSFs
 scram b -j 8
 ```
-This branch includes the final 2017 SFs too.
 
 The c++ interface require you to scram b after checkout. If you do not place the code in the above hierarchy within CMSSW
 the python paths are not guaranteed to work.
@@ -30,7 +29,8 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
       * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
       * HLT_DoubleMediumChargedIsoPFTau**HPS**35_Trk1_eta2p1_Reg,  for Run >= 317509
 
-Efficiencies and SF are measured on Full 2018 Data with 59.6 1/fb using SingleMuon dataset of 17Sep18 ReReco samples from RunA to RunC and of PromptReco samples for RunD. 
+Efficiencies and SF are measured on Full 2018 Data with 59.6 1/fb using SingleMuon dataset of 17Sep18 ReReco samples from RunA to RunC and of PromptReco samples for RunD. The 2018 SFs are provided including the analytic fit and uncertainties per decay mode in May 2019: https://indico.cern.ch/event/820066/contributions/3430600/attachments/1843348/3023303/TauTrigger2018SF_tauIDMeeting_hsert.pdf
+
 
 # Tau Trigger Scale Factor Tool for 2017 Data & MC
 
@@ -63,7 +63,7 @@ Application of the efficiency and SF uncertainties should be considered _EXPERIM
 A helper class, `getTauTriggerSFs`, in `python/getTauTriggerSFs.py` can be used. It should be initialized with:
    * the desired trigger: `ditau`, `mutau`, `etau`
    * the data year: `2017`, `2018` as an int
-   * the WP being used: `vloose`, `loose`, `medium`, `tight`, `vtight`, and `vvtight` (`vvloose` is not supported by the Tau POG)
+   * the WP being used: `vloose`, `loose`, `medium`, `tight`, `vtight`, and `vvtight` (`vvloose` was not provided in 2017, but it is provided for 2018. If you want to use this WP, please contact with us.)
    * the desired Tau ID type: `MVAv2` which uses dR0p5. The `dR0p3` WPs are not supported currently.
 
 ```
@@ -90,8 +90,11 @@ Additionally, if one needs the trigger efficiencies and not the SFs you can grab
    * getTriggerEfficiencyMCUncertUp( pt, eta, phi, dm )
    * getTriggerEfficiencyMCUncertDown( pt, eta, phi, dm )
 
-It is found that there is a slight barrel vs. end cap difference in tau trigger performance. To account for this, there are additional eta-phi adjustments made to the delivered SFs from `getTauTriggerSFs`. In additional to the barrel / end cap separation, we isolate a specific region in the barrel which had well known issues with deal pixel modules and varying tau reconstruction during 2017 data taking (0 < eta < 1.5, phi > 2.8). The eta-phi adjustements are provided in as TH2s in the main root file `data/data/tauTriggerEfficiencies2017.root` and are applied by default in `getTauTriggerSFs`.
+It is found that there is a slight barrel vs. end cap difference in tau trigger performance. To account for this, there are additional eta-phi adjustments made to the delivered SFs from `getTauTriggerSFs`. 
 
+In 2017, in additional to the barrel / end cap separation, we isolate a specific region in the barrel which had well known issues with deal pixel modules and varying tau reconstruction during 2017 data taking (0 < eta < 1.5, phi > 2.8). The eta-phi adjustements are provided in as TH2s in the main root file `data/data/tauTriggerEfficiencies2017.root` and are applied by default in `getTauTriggerSFs`.
+
+In 2018, in additional to the barrel / end cap separation, we isolate a specific region in the endcap which had well known issues with broken HCAL modules ((-2.1 < tauEta < -1.5) && (-1.6 < tauPhi < -0.8). The eta-phi adjustements are provided in as TH2s in the main root file `data/data/tauTriggerEfficiencies2018.root` and are applied by default in `getTauTriggerSFs`.
 
 # Example Code
 For analysis using Tau MVAv2 dR0p5 ID using Tight WP:
