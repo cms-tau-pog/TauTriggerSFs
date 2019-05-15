@@ -112,6 +112,14 @@ sf_down    = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(),
 Please contact the Tau POG trigger experts who can help point you towards the original NTuples used to make the fits and TGraphAsymmErrors distributions.
 
 # For Recreating Efficiency ROOT File for Other Years
+# For use with C++ interface
+
+Thank you to Christian Veelken and Artur Gottmann who have both contributed here.  
+The C++ interface requires you to have the proper directory structure from the initial checkout instructions.  
+You will need to update your `BuildFile.xml` to include `<use name="TauTriggerSFs2017/TauTriggerSFs2017" />`.
+For an example of how to use the code in an EDProducer see Artur/KIT's code here:
+   * `TauTrigger2017EfficiencyProducer.h`: https://github.com/KIT-CMS/KITHiggsToTauTau/blob/reduced_trigger_objects/interface/Producers/TauTrigger2017EfficiencyProducer.h
+   * `TauTrigger2017EfficiencyProducer.cc`: https://github.com/KIT-CMS/KITHiggsToTauTau/blob/reduced_trigger_objects/src/Producers/TauTrigger2017EfficiencyProducer.cc
 
 There are some simple python scripts available to create the ROOT file used by `python/getTauTriggerSFs.py`. These are current set up to take the Tau POG style ntuples and the fit files created by Hale. Important files:
    * `makeEtaPhiJson.py`: create eta-phi efficiency maps. If detector conditions were perfect, these could be used to account for differences in eta efficiencies between barrel and endcap. As it is, in 2017 the eta-phi mapping targets the 2017 pixel problem region. This should be edited for delivery of 2018 eta-phi efficiencies.
