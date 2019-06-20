@@ -56,8 +56,6 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
             sfs3A.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Up' ) )
             sfs3B.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Down' ) )
         elif(year2018 or year2016):
-            print "pt", pt
-            print "SFA", tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' )
             pts.append( pt )
             sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
             sfsA.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' ) )
