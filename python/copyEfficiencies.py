@@ -8,12 +8,12 @@ efficiency ingredients:
 """
 
 import ROOT
-from TauAnalysisTools.TauTriggerSFs.helpers import getHist, getGraph, getFit
+from TauAnalysisTools.TauTriggerSFs.helpers import getHist, getGraph, getFit, getHistFromGraph
 
 # choose which year's SF to calculate!
 year2017 = False
 year2018 = True
-
+year2016 = False
 
 print "Making initial SF file"
 
@@ -24,10 +24,12 @@ if(year2017):
 	oFile.cd()
 elif(year2018):
 	iFile = ROOT.TFile( '/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/tauTriggerFitResults_2018.root', 'r' )
-
 	oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2018_copied.root', 'RECREATE' )
 	oFile.cd()
-
+elif(year2016):
+        iFile = ROOT.TFile( 'data/tauTriggerFitResults_2016.root', 'r' )
+        oFile = ROOT.TFile( 'data/tauTriggerEfficiencies2016_copied.root', 'RECREATE' )
+        oFile.cd()
 
 # Supporting 2017 MVAv2 only
 for trigger in ['ditau', 'mutau', 'etau'] :
@@ -38,14 +40,16 @@ for trigger in ['ditau', 'mutau', 'etau'] :
                 iName2018 = trigger+'_XXX_'+wp+'TauMVA_'+dm+'_'+sample
                 print iName2018
                 if(year2017): iName = iName2017
-                elif(year2018): iName = iName2018
+                elif(year2018 or year2016): iName = iName2018
                 saveName = trigger+'_'+wp+'MVAv2_'+dm+'_'+sample
                 print saveName
                 g = getGraph( iFile, iName.replace('XXX','gEffi'), saveName+'_graph' )
+                histo = getHistFromGraph( iFile, iName.replace('XXX','gEffi'), saveName+'_histo' )
                 f = getFit( iFile, iName.replace('XXX','fit'), saveName+'_fit' )
                 h = getHist( iFile, iName.replace('XXX','herrband'), saveName+'_errorBand' )
                 oFile.cd()
                 g.Write()
+                histo.Write()
                 f.Write()
                 h.Write()
 

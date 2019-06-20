@@ -18,8 +18,8 @@ import json
 
 # choose which year's eta-phi JSON files to make!
 year2017 = False
-year2018 = True
-
+year2018 = False
+year2016 = True
 
 def get_hist( name, tree, cut, weight, x_var, binning ) :
     h = ROOT.TH1D( name, "%s;%s" % (name, x_var), len(binning)-1, binning )
@@ -41,6 +41,10 @@ def printJson( to_dump ) :
                 outFile.close()
         elif(year2018):
             with open('data/tauTriggerEfficienciesEtaPhiMap2018_pre.json', 'w') as outFile :
+                json.dump( to_dump, outFile, indent=2 )
+                outFile.close()
+        elif(year2016):
+            with open('data/tauTriggerEfficienciesEtaPhiMap2016_pre.json', 'w') as outFile :
                 json.dump( to_dump, outFile, indent=2 )
                 outFile.close()
 
@@ -96,6 +100,30 @@ def get_2018trigger_map() :
 
     return trigger_map
 
+def get_2016trigger_map() :
+
+    trigger_map = {
+        'etau' : {
+            'data' : "/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/Ntuple_SingleMuon_Run2016BtoH-17Jul2018_190228_SSsubtraction_VVLooseWP2017v2_forFit_270519.root",
+            'mc' : "/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/Ntuple_DYJets_RunIISummer16MiniAODv3_94X_mcRun2_ext1ANDext2-v2_190306_PUreweight_OStauGenMatched_VVLooseWP2017v2_forFit_270519.root",
+            'ptThreshold' : 25,
+            'accept' : 'hasHLTetauPath_0and1',
+        },
+        'mutau' : {
+             'data' : "/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/Ntuple_SingleMuon_Run2016BtoH-17Jul2018_190228_SSsubtraction_VVLooseWP2017v2_forFit_270519.root",
+            'mc' : "/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/Ntuple_DYJets_RunIISummer16MiniAODv3_94X_mcRun2_ext1ANDext2-v2_190306_PUreweight_OStauGenMatched_VVLooseWP2017v2_forFit_270519.root",
+            'ptThreshold' : 25,
+            'accept' : 'hasHLTmutauPath_0',
+        },
+        'ditau' : {
+            'data' : "/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/Ntuple_SingleMuon_Run2016BtoH-17Jul2018_190228_SSsubtraction_VVLooseWP2017v2_forFit_270519.root",
+            'mc' : "/afs/cern.ch/user/h/hsert/public/Run2SamplesTrigger/Ntuple_DYJets_RunIISummer16MiniAODv3_94X_mcRun2_ext1ANDext2-v2_190306_PUreweight_OStauGenMatched_VVLooseWP2017v2_forFit_270519.root",
+            'ptThreshold' : 40,
+            'accept' : 'hasHLTditauPath_3or4',
+        },
+    }
+
+    return trigger_map
 
 wp_map = {
     'vvtight' : 'byVVTightIsolationMVArun2017v2DBoldDMwLT2017',
@@ -108,7 +136,7 @@ wp_map = {
 }
 
 
-saveDir = '../../../tau_fits_29April19/'
+saveDir = '../../../tau_fits2016_18June19/'
 
 x_var = "tauPt"
 x_var = "tauEta"
@@ -119,6 +147,8 @@ if(year2017):
 	trigger_map = get_2017trigger_map()
 elif(year2018):
 	trigger_map = get_2018trigger_map()
+elif(year2016):
+        trigger_map = get_2016trigger_map()
 
 # For visualization
 #xBinning = array('f', [] )
@@ -147,11 +177,18 @@ eta_phi_regions_2018 = {
     'HCALProblemEndCap' : '( (tauEta > -2.1 && tauEta < -1.5) &&  (tauPhi >-1.6 && tauPhi < -0.8) )',
 }
 
+eta_phi_regions_2016 = {
+    'Average' : '(1.)',
+    'Barrel' : '(1.)',
+    'EndCap' : '(1.)',
+}
+
 if(year2017):
 	eta_phi_regions = eta_phi_regions_2017
 elif(year2018):
 	eta_phi_regions = eta_phi_regions_2018
-
+elif(year2016):
+        eta_phi_regions = eta_phi_regions_2016
 dm_map = {
     'dm0' : 'tauDM == 0',
     'dm1' : 'tauDM == 1',

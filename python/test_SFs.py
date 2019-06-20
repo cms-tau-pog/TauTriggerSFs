@@ -6,7 +6,8 @@ from array import array
 
 # choose which year's eta-phi files to make!
 year2017 = False
-year2018 = True
+year2018 = False
+year2016 = True
 
 def build_legend( graphs ) :
     legend = ROOT.TLegend(0.50, 0.7, 0.90, 0.9)
@@ -22,13 +23,13 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
     wp = 'MVAv2'
 
     if target_type == 'ditau' :
-        min_ = 40
+        min_ = 20
         name = 'Di-Tau'
     if target_type == 'etau' :
-        min_ = 35
+        min_ = 20
         name = 'E-Tau'
     if target_type == 'mutau' :
-        min_ = 32
+        min_ = 20
         name = 'Mu-Tau'
 
     pts = array('d', [])
@@ -54,7 +55,9 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
             sfs3.append( tauSFs.getTriggerScaleFactor( pt, 1.0, 2.9, dm ) )
             sfs3A.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Up' ) )
             sfs3B.append( tauSFs.getTriggerScaleFactorUncert( pt, 1.0, 2.9, dm, 'Down' ) )
-        elif(year2018):
+        elif(year2018 or year2016):
+            print "pt", pt
+            print "SFA", tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' )
             pts.append( pt )
             sfs.append( tauSFs.getTriggerScaleFactor( pt, 0.0, 0.0, dm ) )
             sfsA.append( tauSFs.getTriggerScaleFactorUncert( pt, 0.0, 0.0, dm, 'Up' ) )
@@ -86,6 +89,10 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
         g.SetTitle( 'Barrel' )
         g2.SetTitle( 'End Cap' )
         g3.SetTitle( 'End Cap, HCAL Region' )
+    elif(year2016):
+        g3.SetTitle( 'Scale Factor' )
+        g3A.SetTitle( '+1 #sigma unc.' )
+        g3B.SetTitle( '-1 #sigma unc.' )
     g2.SetLineColor(ROOT.kRed)
     g2A.SetLineColor(ROOT.kRed)
     g2B.SetLineColor(ROOT.kRed)
@@ -108,15 +115,17 @@ def make_plots( tauSFs, target_type = 'ditau', dm=0 ) :
     mg.Add( g3 )
     mg.Add( g3A )
     mg.Add( g3B )
-    mg.SetMaximum( 1.2 )
+    mg.SetMaximum( 1.3 )
+    mg.SetMaximum( 0.1 )
     mg.Draw( 'alp' )
     mg.GetXaxis().SetTitle( 'Offline Tau p_{T} (GeV)' )
     mg.GetYaxis().SetTitle( 'Trigger SF' )
     leg = build_legend( [g, g2, g3] )
+    if(year2016): leg = build_legend( [g3, g3A, g3B] )
     leg.Draw('same')
     g.SetTitle( '%s, type: %s, WP: %s' % (name, wp, tauWP) )
     p.Update()
-    c.SaveAs('testPlots_07May2019/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
+    c.SaveAs('testPlots_18June2019_dfit/'+name+'_'+wp+'_'+tauWP+'_DM'+str(dm)+'.png')
 
     del sfs, sfs2, sfs3, g, g2, g3, mg
 
@@ -132,6 +141,7 @@ for trigger in ['ditau', 'mutau', 'etau'] :
     #for tauWP in ['vloose', 'medium', 'vvtight'] :
         if(year2017): tauSFs = getTauTriggerSFs(trigger, 2017, tauWP, 'MVAv2')
         elif(year2018): tauSFs = getTauTriggerSFs(trigger, 2018, tauWP, 'MVAv2')
+        elif(year2016): tauSFs = getTauTriggerSFs(trigger, 2016, tauWP, 'MVAv2')
         make_plots( tauSFs, trigger, 0 )
         make_plots( tauSFs, trigger, 1 )
         make_plots( tauSFs, trigger, 10 )

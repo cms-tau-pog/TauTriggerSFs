@@ -40,8 +40,8 @@ def getTH1FfromTGraphAsymmErrors( asym, name ) :
     return outH
 
 
-def getHistFromGraph( fName, hName, saveName ) :
-    f = ROOT.TFile( 'data/'+fName, 'r' )
+def getHistFromGraph( f, hName, saveName ) :
+   # f = ROOT.TFile( 'data/'+fName, 'r' )
     graph = f.Get( hName )
     h = getTH1FfromTGraphAsymmErrors( graph, saveName )
     h.SetDirectory( 0 )

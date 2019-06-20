@@ -9,8 +9,8 @@ from array import array
 
 # choose which year's eta-phi ROOT files to make!
 year2017 = False
-year2018 = True
-
+year2018 = False
+year2016 = True
 # "Average" : 0.5485,
 # "NonPixelProblemBarrel" : 0.5570,
 # "EndCap" : 0.5205,
@@ -48,6 +48,17 @@ def fillH2_2018( trigger, wp, dm, sample, info_map, h2 ) :
             else :
                 print "Didn't we cover all the values?",x,y
 
+def fillH2_2016( trigger, wp, dm, sample, info_map, h2 ) :
+    print "Filling: ",h2
+    for x in range( 1, h2.GetXaxis().GetNbins()+1 ) :
+        for y in range( 1, h2.GetYaxis().GetNbins()+1 ) :
+            if x == 1 or x == 3 : # beyond eta range, abs(eta)>2.1
+                h2.SetBinContent( x, y, 0.0 )
+            elif x == 2 : # the rest of the eta phi region, no eta phi separation applied for 2016
+                h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "Average" ] )
+            else :
+                print "Didn't we cover all the values?",x,y
+
         
 def fillAvgH2( trigger, wp, dm, sample, info_map, h2 ) :
     print "Filling: ",h2
@@ -68,6 +79,10 @@ if(year2017):
 elif(year2018):
 	with open('data/tauTriggerEfficienciesEtaPhiMap2018_pre.json') as etaPhiInfo :
 		info_map = json.load( etaPhiInfo )
+elif(year2016):
+        with open('data/tauTriggerEfficienciesEtaPhiMap2016_pre.json') as etaPhiInfo :
+                info_map = json.load( etaPhiInfo )
+
 
 print "Making Eta Phi Map"
 #saveDir = '/afs/cern.ch/user/t/truggles/www/tau_fits_Feb13v2/'
@@ -83,12 +98,18 @@ if(year2017):
 elif(year2018):
 	oFile = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2018_pre.root', 'RECREATE' )
 	oFile.cd()
+elif(year2016):
+        oFile = ROOT.TFile( 'data/tauTriggerEfficienciesEtaPhi2016_pre.root', 'RECREATE' )
+        oFile.cd()
 
 xBinning = array('f', [-2.5, -2.1, -1.5, 0, 1.5, 2.1, 2.5] )
 if(year2017):
 	yBinning = array('f', [-3.2, 2.8, 3.2] )
 elif(year2018):
 	yBinning = array('f', [-3.2, -1.6, -0.8, 3.2] )
+elif(year2016):
+        yBinning = array('f', [-3.2, 3.2] )
+        xBinning = array('f', [-2.5, -2.1, 2.1, 2.5] )
 
 xBinningAvg = array('f', [-2.5, -2.1, 2.1, 2.5] )
 yBinningAvg = array('f', [-3.2, 3.2] )
@@ -109,7 +130,9 @@ for trigger in ['ditau', 'etau', 'mutau'] :
             elif(year2018):
                 fillH2_2018( trigger, wp, dm, 'data', info_map, h_data )
                 fillH2_2018( trigger, wp, dm, 'mc', info_map, h_mc )
-
+            elif(year2016):
+                fillH2_2016( trigger, wp, dm, 'data', info_map, h_data )
+                fillH2_2016( trigger, wp, dm, 'mc', info_map, h_mc )
             fillAvgH2( trigger, wp, dm, 'data', info_map, h_data_avg )
             fillAvgH2( trigger, wp, dm, 'mc', info_map, h_mc_avg )
 
