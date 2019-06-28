@@ -34,7 +34,7 @@ class getTauTriggerSFs :
 
         # Assume this is in CMSSW with the below path structure
         base = os.environ['CMSSW_BASE']
-        self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%i.root' % self.year, 'r' )
+        self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%iv4.root' % self.year, 'r' )
 
 
         ## Load the TF1s containing the analytic best-fit results.
@@ -60,16 +60,11 @@ class getTauTriggerSFs :
         self.fitUncMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
         self.fitUncMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_errorBand' % (self.trigger, self.tauWP, self.wpType ) )
         
-
-        # Load the TH1s containing the bin by bin values
-        self.binnedDataMap = {}
-        self.binnedMCMap = {}
-        self.binnedDataMap[ 0 ] = self.f.Get('%s_%s%s_dm0_DATA_histo' % (self.trigger, self.tauWP, self.wpType) )
-        self.binnedDataMap[ 1 ] = self.f.Get('%s_%s%s_dm1_DATA_histo' % (self.trigger, self.tauWP, self.wpType) )
-        self.binnedDataMap[ 10 ] = self.f.Get('%s_%s%s_dm10_DATA_histo' % (self.trigger, self.tauWP, self.wpType) )
-        self.binnedMCMap[ 0 ] = self.f.Get('%s_%s%s_dm0_MC_histo' % (self.trigger, self.tauWP, self.wpType) )
-        self.binnedMCMap[ 1 ] = self.f.Get('%s_%s%s_dm1_MC_histo' % (self.trigger, self.tauWP, self.wpType) )
-        self.binnedMCMap[ 10 ] = self.f.Get('%s_%s%s_dm10_MC_histo' % (self.trigger, self.tauWP, self.wpType) )
+         # Load the TH1s containing the bin by bin values
+        self.binnedSFMap = {}
+        self.binnedSFMap[ 0 ] = self.f.Get('%s_%s%s_dm0_CoarseBinSF' % (self.trigger, self.tauWP, self.wpType) )
+        self.binnedSFMap[ 1 ] = self.f.Get('%s_%s%s_dm1_CoarseBinSF' % (self.trigger, self.tauWP, self.wpType) )
+        self.binnedSFMap[ 10 ] = self.f.Get('%s_%s%s_dm10_CoarseBinSF' % (self.trigger, self.tauWP, self.wpType) )
 
         # Because of low statistics in the problem region of the barrel, we apply the Eta-Phi corrections
         # based on taus firing mutau trigger and passing the vloose MVA WP. This provides the most statistically
@@ -112,20 +107,17 @@ class getTauTriggerSFs :
         if dm == 2 : dm = 1   # Originally, DM=2 was included in oldDM, but with the dynamic strip clustering the second strip was reconstructed together with the first one. So it ends up to DM=1. But, there are still some cases where DM=2 survives.
         return dm
 
-    def getEfficiency( self, pt, eta, phi, effHisto, fit, uncHist, etaPhiHist, etaPhiAvgHist, uncert='Nominal') :
+    def getEfficiency( self, pt, eta, phi, fit, uncHist, etaPhiHist, etaPhiAvgHist, uncert='Nominal') :
         pt = self.ptCheck( pt )
-        eff_fit = fit.Eval( pt )
-        eff_binned = effHisto.GetBinContent(effHisto.FindBin( pt ))
+        eff = fit.Eval( pt )
 
         # Shift the pt dependent efficiency by the fit uncertainty if requested
         if uncert != 'Nominal' :
             assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
             if uncert == 'Up' :
-                eff_fit += uncHist.GetBinError( uncHist.FindBin( pt ) )
-                eff_binned += effHisto.GetBinError( effHisto.FindBin( pt ) )
+                eff += uncHist.GetBinError( uncHist.FindBin( pt ) )
             else : # must be Down
-                eff_fit -= uncHist.GetBinError( uncHist.FindBin( pt ) )
-                eff_binned -= effHisto.GetBinError( effHisto.FindBin( pt ) )
+                eff -= uncHist.GetBinError( uncHist.FindBin( pt ) )
 
         # Adjust SF based on (eta, phi) location
         # keep eta barrel boundaries within SF region
@@ -141,18 +133,6 @@ class getTauTriggerSFs :
             print "Returning efficiency = 0.0"
             return 0.0
 
-        if(self.year==2017 or self.year == 2018):
-            eff = eff_fit
-        elif(self.year == 2016):
-            if(self.trigger == 'ditau'):
-                ptthreshold = 40
-            elif(self.trigger == 'mutau' or self.trigger  == 'etau'):
-                ptthreshold = 25
-
-            if( pt < ptthreshold):
-                eff = eff_fit
-            else:
-                eff = eff_fit
         eff *= etaPhiVal / etaPhiAvg
         if eff > 1. : eff = 1.
         if eff < 0. : eff = 0. # Some efficiency fits go negative at very low tau pT, prevent that.
@@ -163,17 +143,17 @@ class getTauTriggerSFs :
     def getTriggerEfficiencyData( self, pt, eta, phi, dm) :
         dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.binnedDataMap[ dm], self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Nominal')
     def getTriggerEfficiencyDataUncertUp( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency(  pt, eta, phi, self.binnedDataMap[ dm], self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
+        return self.getEfficiency(  pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Up' )
     def getTriggerEfficiencyDataUncertDown( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.binnedDataMap[ dm], self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Down' )
 
 
@@ -181,21 +161,33 @@ class getTauTriggerSFs :
     def getTriggerEfficiencyMC( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.binnedMCMap[ dm], self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Nominal')
     def getTriggerEfficiencyMCUncertUp( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.binnedMCMap[ dm], self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Up'  )
     def getTriggerEfficiencyMCUncertDown( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
         assert( dm in [0, 1, 10] ), "Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i" % dm
-        return self.getEfficiency( pt, eta, phi, self.binnedMCMap[ dm], self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
+        return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Down' )
 
 
-    # return the data/MC scale factor
+    def getBinnedScaleFactor (self, pt, dm, sfHisto) :
+        pt = self.ptCheck( pt )
+        dm = self.dmCheck( dm )
+        sf = sfHisto.GetBinContent(sfHisto.FindBin( pt ))
+        return sf
+
+    def getBinnedScaleFactorUnc(self, pt,  dm, sfHisto) :
+        pt = self.ptCheck( pt )
+        dm = self.dmCheck( dm )
+        SFunc = sfHisto.GetBinError( sfHisto.FindBin( pt ) )
+        return SFunc
+
+	# return the data/MC scale factor
     def getTriggerScaleFactor( self, pt, eta, phi, dm) :
         pt = self.ptCheck( pt )
         dm = self.dmCheck( dm )
@@ -207,11 +199,24 @@ class getTauTriggerSFs :
             print " - MC Efficiency = %f" % effMC
             return 0.0
 
-        if(effData!=0 and effMC!=0):
-            sf = effData / effMC
-        else:
-            print "The efficiency is zero in either Data or MC histogram, so SF is set to zero"
-            sf = 0
+        if(self.year == 2016):
+            if(self.trigger == 'ditau'): pt_recommended = 40
+            elif(self.trigger == 'mutau' or self.trigger  == 'etau'): pt_recommended = 25
+
+            if( pt > pt_recommended):
+                if(effMC!=0): sf = effData / effMC
+                else:
+                    sf = 0
+                    print "The efficiency is zero in either Data or MC histogram, so SF is set to zero"
+            else:
+                sf = self.getBinnedScaleFactor(pt, dm, self.binnedSFMap[ dm])
+
+        elif(self.year==2017 or self.year == 2018):
+            if(effData!=0 and effMC!=0): sf = effData / effMC
+            else:
+                sf = 0
+                print "The efficiency is zero in either Data or MC histogram, so SF is set to zero"
+
         return sf
 
 
@@ -221,7 +226,7 @@ class getTauTriggerSFs :
     # for simple division. Using getTriggerEfficiencyXXXUncertDown instead
     # of Up ensures we have the full uncertainty reported. Up sometimes
     # is clipped by efficiency max of 1.0.
-    def getTriggerScaleFactorUncert( self, pt, eta, phi, dm, uncert ) :
+    def getTriggerScaleFactorUncert( self, pt, eta, phi, dm, uncert) :
         assert( uncert in ['Up', 'Down'] ), "Uncertainties are provided using 'Up'/'Down'"
         pt = self.ptCheck( pt )
         dm = self.dmCheck( dm )
@@ -236,15 +241,30 @@ class getTauTriggerSFs :
             return 0.0
         if(effMC!=0): relMCDiff = (effMC - effMCDown) / effMC
 
-        if(effData!=0 and effMC!=0):
-            deltaSF = sqrt( relDataDiff**2 + relMCDiff**2 )
-            sf = (effData / effMC)
-            if uncert == 'Up' :
-                return sf * (1. + deltaSF)
-            else : # must be Down
-                return sf * (1. - deltaSF)
+        sf_fit = effData / effMC
+        sf_binned =  self.getBinnedScaleFactor(pt, dm, self.binnedSFMap[ dm])
+
+        deltaSF_fit = sqrt( relDataDiff**2 + relMCDiff**2 )
+        deltaSF_binned =  self.getBinnedScaleFactorUnc(pt, dm, self.binnedSFMap[ dm])
+
+        if(effMC!=0): relMCDiff = (effMC - effMCDown) / effMC
+        if(self.year == 2016):
+            if(self.trigger == 'ditau'): pt_recommended = 40
+            elif(self.trigger == 'mutau' or self.trigger  == 'etau'): pt_recommended = 25
+
+            if( pt > pt_recommended):
+                sf = sf_fit
+                deltaSF = deltaSF_fit
+            else:
+                sf= sf_binned
+                deltaSF = deltaSF_binned
         else:
-            print "The efficiency is zero in either Data or MC histogram, so SF is set to zero"
-            return 0
+            sf = sf_fit
+            deltaSF = deltaSF_fit
+
+        if uncert == 'Up' :
+            return sf * (1. + deltaSF)
+        else : # must be Down
+            return sf * (1. - deltaSF)
 
 
