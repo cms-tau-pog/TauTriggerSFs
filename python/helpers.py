@@ -28,8 +28,8 @@ def getTH1FfromTGraphAsymmErrors( asym, name ) :
         yVals.append( y )
         # To simplify, take asymm errors and go to approximation
         # of symmetric for TH1
-        yErrors.append( sqrt(yEPlus**2 + yEMin**2) )
-
+        #yErrors.append( sqrt(yEPlus**2 + yEMin**2) )
+        yErrors.append(max(yEPlus, yEMin))
     # Don't forget to add the high end of last bin
     xSpacing.append( x+xEPlus )
 
