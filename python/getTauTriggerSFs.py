@@ -34,7 +34,7 @@ class getTauTriggerSFs :
 
         # Assume this is in CMSSW with the below path structure
         base = os.environ['CMSSW_BASE']
-        self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%iv4.root' % self.year, 'r' )
+        self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%i.root' % self.year, 'r' )
 
 
         ## Load the TF1s containing the analytic best-fit results.
