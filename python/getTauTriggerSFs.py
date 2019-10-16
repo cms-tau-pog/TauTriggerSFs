@@ -178,13 +178,17 @@ class getTauTriggerSFs :
     def getBinnedScaleFactor (self, pt, dm, sfHisto) :
         pt = self.ptCheck( pt )
         dm = self.dmCheck( dm )
-        sf = sfHisto.GetBinContent(sfHisto.FindBin( pt ))
+        sf = 1
+        if(sfHisto):
+            sf = sfHisto.GetBinContent(sfHisto.FindBin( pt ))
         return sf
 
     def getBinnedScaleFactorUnc(self, pt,  dm, sfHisto) :
         pt = self.ptCheck( pt )
         dm = self.dmCheck( dm )
-        SFunc = sfHisto.GetBinError( sfHisto.FindBin( pt ) )
+        SFunc = 0
+        if(sfHisto):
+            SFunc = sfHisto.GetBinError( sfHisto.FindBin( pt ) )
         return SFunc
 
 	# return the data/MC scale factor
