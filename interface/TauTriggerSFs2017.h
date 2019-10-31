@@ -67,6 +67,7 @@ protected:
   std::string year_;
   std::string tauWP_;
   std::string wpType_;
+  std::vector<int> allowedDMs_;
 
   std::map<int, TF1*> fitDataMap_;
   std::map<int, TF1*> fitKITDataMap_;

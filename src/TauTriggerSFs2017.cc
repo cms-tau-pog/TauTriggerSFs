@@ -75,6 +75,14 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
     std::cerr << "Failed to open input file = '" << inputFileNameKIT_ << "' !!" << std::endl;
     assert(0);
   }
+
+  // For the new DM finding used along also DM11 is allowed.
+  allowedDMs_ = {0, 1, 10};
+  if (wpType_ == "DeepTau")
+  {
+      allowedDMs_.push_back(11);
+  }
+
   // Load the TF1s containing the analytic best-fit results
   // This is done per decay mode: 0, 1, 10.
   fitDataMap_ [ 0] = loadTF1(inputFile_, Form("%s_%s%s_dm0_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
@@ -89,6 +97,14 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   fitEMBMap_ [ 0] = loadTF1(inputFileKIT_, Form("%s_%s%s_dm0_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitEMBMap_ [ 1] = loadTF1(inputFileKIT_, Form("%s_%s%s_dm1_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitEMBMap_ [10] = loadTF1(inputFileKIT_, Form("%s_%s%s_dm10_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+  if (wpType == "DeepTau")
+  {
+      fitDataMap_ [11] = loadTF1(inputFile_, Form("%s_%s%s_dm11_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitKITDataMap_ [11] = loadTF1(inputFileKIT_, Form("%s_%s%s_dm11_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitMCMap_ [11] = loadTF1(inputFile_, Form("%s_%s%s_dm11_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitEMBMap_ [11] = loadTF1(inputFileKIT_, Form("%s_%s%s_dm11_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+  }
+
 
   // Load the TH1s containing the analytic best-fit result in 1 GeV incriments and the associated uncertainty.
   // This is done per decay mode: 0, 1, 10.
@@ -104,6 +120,13 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   fitUncEMBMap_ [ 0] = loadTH1(inputFileKIT_, Form("%s_%s%s_dm0_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitUncEMBMap_ [ 1] = loadTH1(inputFileKIT_, Form("%s_%s%s_dm1_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitUncEMBMap_ [10] = loadTH1(inputFileKIT_, Form("%s_%s%s_dm10_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+  if (wpType == "DeepTau")
+  {
+      fitUncDataMap_ [11] = loadTH1(inputFile_, Form("%s_%s%s_dm11_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitUncKITDataMap_ [11] = loadTH1(inputFileKIT_, Form("%s_%s%s_dm11_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitUncMCMap_ [11] = loadTH1(inputFile_, Form("%s_%s%s_dm11_MC_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitUncEMBMap_ [11] = loadTH1(inputFileKIT_, Form("%s_%s%s_dm11_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+  }
 
 
   // Because of low statistics in the problem region of the barrel, we apply the Eta-Phi corrections
@@ -127,6 +150,13 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   effEtaPhiEMBMap_ [ 0] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm0_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiEMBMap_ [ 1] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm1_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiEMBMap_ [10] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm10_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+  if (wpType == "DeepTau")
+  {
+      effEtaPhiDataMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiKITDataMap_ [11] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm11_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_MC", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiEMBMap_ [11] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm11_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+  }
 
   // Eta Phi Averages
   // This is done per decay mode: 0, 1, 10.
@@ -142,6 +172,13 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   effEtaPhiAvgEMBMap_ [ 0] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm0_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiAvgEMBMap_ [ 1] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm1_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiAvgEMBMap_ [10] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm10_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+  if (wpType == "DeepTau")
+  {
+      effEtaPhiAvgDataMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiAvgKITDataMap_ [11] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm11_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiAvgMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_MC_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiAvgEMBMap_ [11] = loadTH2(inputFileKIT_, Form("%s_%s%s_dm11_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+  }
 }
 
 
@@ -196,9 +233,14 @@ double getEfficiency(double pt, double eta, double phi, const TF1* fit, TH1* unc
 double TauTriggerSFs2017::getTriggerEfficiencyData(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitDataMap_.at(dm_checked), fitUncDataMap_.at(dm_checked), effEtaPhiDataMap_.at(dm_checked), effEtaPhiAvgDataMap_.at(dm_checked));
@@ -207,9 +249,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyData(double pt, double eta, double
 double TauTriggerSFs2017::getTriggerEfficiencyDataUncertUp(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitDataMap_.at(dm_checked), fitUncDataMap_.at(dm_checked), effEtaPhiDataMap_.at(dm_checked), effEtaPhiAvgDataMap_.at(dm_checked), "Up");
@@ -218,9 +265,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyDataUncertUp(double pt, double eta
 double TauTriggerSFs2017::getTriggerEfficiencyDataUncertDown(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitDataMap_.at(dm_checked), fitUncDataMap_.at(dm_checked), effEtaPhiDataMap_.at(dm_checked), effEtaPhiAvgDataMap_.at(dm_checked), "Down");
@@ -231,9 +283,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyDataUncertDown(double pt, double e
 double TauTriggerSFs2017::getTriggerEfficiencyKITData(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitKITDataMap_.at(dm_checked), fitUncKITDataMap_.at(dm_checked), effEtaPhiKITDataMap_.at(dm_checked), effEtaPhiAvgKITDataMap_.at(dm_checked));
@@ -242,9 +299,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyKITData(double pt, double eta, dou
 double TauTriggerSFs2017::getTriggerEfficiencyKITDataUncertUp(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitKITDataMap_.at(dm_checked), fitUncKITDataMap_.at(dm_checked), effEtaPhiKITDataMap_.at(dm_checked), effEtaPhiAvgKITDataMap_.at(dm_checked), "Up");
@@ -253,9 +315,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyKITDataUncertUp(double pt, double 
 double TauTriggerSFs2017::getTriggerEfficiencyKITDataUncertDown(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitKITDataMap_.at(dm_checked), fitUncKITDataMap_.at(dm_checked), effEtaPhiKITDataMap_.at(dm_checked), effEtaPhiAvgKITDataMap_.at(dm_checked), "Down");
@@ -265,9 +332,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyKITDataUncertDown(double pt, doubl
 double TauTriggerSFs2017::getTriggerEfficiencyMC(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitMCMap_.at(dm_checked), fitUncMCMap_.at(dm_checked), effEtaPhiMCMap_.at(dm_checked), effEtaPhiAvgMCMap_.at(dm_checked));
@@ -276,9 +348,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyMC(double pt, double eta, double p
 double TauTriggerSFs2017::getTriggerEfficiencyMCUncertUp(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitMCMap_.at(dm_checked), fitUncMCMap_.at(dm_checked), effEtaPhiMCMap_.at(dm_checked), effEtaPhiAvgMCMap_.at(dm_checked), "Up");
@@ -287,9 +364,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyMCUncertUp(double pt, double eta, 
 double TauTriggerSFs2017::getTriggerEfficiencyMCUncertDown(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitMCMap_.at(dm_checked), fitUncMCMap_.at(dm_checked), effEtaPhiMCMap_.at(dm_checked), effEtaPhiAvgMCMap_.at(dm_checked), "Down");
@@ -299,9 +381,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyMCUncertDown(double pt, double eta
 double TauTriggerSFs2017::getTriggerEfficiencyEMB(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitEMBMap_.at(dm_checked), fitUncEMBMap_.at(dm_checked), effEtaPhiEMBMap_.at(dm_checked), effEtaPhiAvgEMBMap_.at(dm_checked));
@@ -310,9 +397,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyEMB(double pt, double eta, double 
 double TauTriggerSFs2017::getTriggerEfficiencyEMBUncertUp(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitEMBMap_.at(dm_checked), fitUncEMBMap_.at(dm_checked), effEtaPhiEMBMap_.at(dm_checked), effEtaPhiAvgEMBMap_.at(dm_checked), "Up");
@@ -321,9 +413,14 @@ double TauTriggerSFs2017::getTriggerEfficiencyEMBUncertUp(double pt, double eta,
 double TauTriggerSFs2017::getTriggerEfficiencyEMBUncertDown(double pt, double eta, double phi, int dm) const
 {
   int dm_checked = dmCheck( dm );
-  if ( (dm_checked!=0) && (dm_checked!=1) && (dm_checked!=10) )
+  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
   {
-    std::cerr << Form("Efficiencies only provided for DMs 0, 1, 10.  You provided DM %i", dm_checked) << std::endl;
+    std::cerr << Form("Efficiencies only provided for DMs ");
+    for (auto dm: allowedDMs_)
+    {
+        std::cerr << dm << " ";
+    }
+    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
     assert(0);
   }
   return getEfficiency(pt, eta, phi, fitEMBMap_.at(dm_checked), fitUncEMBMap_.at(dm_checked), effEtaPhiEMBMap_.at(dm_checked), effEtaPhiAvgEMBMap_.at(dm_checked), "Down");
