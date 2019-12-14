@@ -1,5 +1,2 @@
-<use   name="root"/>
-<Flags CXXFLAGS="-O3 -fPIC -Wswitch -Wswitch-enum -Werror -Wno-error=bool-compare" />
-<export>
-  <lib   name="1"/>
-</export>
+<use name="root"/>
+<export> <lib name="1"/> </export>
