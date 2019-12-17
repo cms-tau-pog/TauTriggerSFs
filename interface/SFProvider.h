@@ -17,7 +17,7 @@ public:
     float getSF(float tau_pt, int tau_dm, int unc_scale = 0) const;
 
 private:
-    static TH1F* LoagHistogram(TFile& file, std::string_view name);
+    static TH1F* LoadHistogram(TFile& file, std::string_view name);
     static float FindBinValue(const TH1F& hist, float x, int unc_scale);
     static int CheckDM(int tau_dm);
 

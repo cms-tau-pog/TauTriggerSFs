@@ -23,7 +23,7 @@ SFProvider::SFProvider(std::string_view input_file, std::string_view channel, st
         for(const auto& entry : histograms) {
             std::ostringstream ss_hist_name;
             ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm" << dm << "_fitted";
-            (*entry.second)[dm].reset(LoagHistogram(root_file, ss_hist_name.str()));
+            (*entry.second)[dm].reset(LoadHistogram(root_file, ss_hist_name.str()));
         }
     }
 }
@@ -46,7 +46,7 @@ float SFProvider::getSF(float tau_pt, int tau_dm, int unc_scale) const
     return FindBinValue(*sf.at(tau_dm), tau_pt, unc_scale);
 }
 
-TH1F* SFProvider::LoagHistogram(TFile& file, std::string_view name)
+TH1F* SFProvider::LoadHistogram(TFile& file, std::string_view name)
 {
     TH1F* hist = dynamic_cast<TH1F*>(file.Get(name.data()));
     if(!hist) {
@@ -55,7 +55,9 @@ TH1F* SFProvider::LoagHistogram(TFile& file, std::string_view name)
            << file.GetName() << "\".";
         throw std::runtime_error(ss.str());
     }
-    return hist;
+    TH1F* cloned_hist = dynamic_cast<TH1F*>(hist->Clone());
+    cloned_hist->SetDirectory(nullptr);
+    return cloned_hist;
 }
 
 float SFProvider::FindBinValue(const TH1F& hist, float x, int unc_scale)
