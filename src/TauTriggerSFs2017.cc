@@ -1,9 +1,8 @@
 #include "TauAnalysisTools/TauTriggerSFs/interface/TauTriggerSFs2017.h"
 
 #include <TString.h> // Form
-
 #include <iostream> // std::cerr, std::endl
-#include <iomanip> 
+#include <iomanip>
 #include <assert.h> // assert
 #include <cmath> // std::sqrt
 
@@ -78,7 +77,7 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   fitMCMap_ [ 0] = loadTF1(inputFile_, Form("%s_%s%s_dm0_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitMCMap_ [ 1] = loadTF1(inputFile_, Form("%s_%s%s_dm1_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitMCMap_ [10] = loadTF1(inputFile_, Form("%s_%s%s_dm10_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  
+
 
   // Load the TH1s containing the analytic best-fit result in 1 GeV incriments and the associated uncertainty.
   // This is done per decay mode: 0, 1, 10.

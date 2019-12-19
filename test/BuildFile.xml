@@ -1,0 +1,3 @@
+<bin file="testSFProvider.cc">
+    <use name="TauAnalysisTools/TauTriggerSFs" />
+</bin>
