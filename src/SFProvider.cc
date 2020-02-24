@@ -64,7 +64,7 @@ float SFProvider::FindBinValue(const TH1F& hist, float x, int unc_scale)
 {
     int bin = hist.FindFixBin(x);
     bin = std::clamp(bin, 1, hist.GetNbinsX());
-    return hist.GetBinContent(bin) + unc_scale * hist.GetBinError(bin);
+    return static_cast<float>(hist.GetBinContent(bin) + unc_scale * hist.GetBinError(bin));
 }
 
 int SFProvider::CheckDM(int tau_dm)
