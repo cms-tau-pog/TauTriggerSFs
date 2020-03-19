@@ -5,7 +5,7 @@
  *
  * Class to access information on tau trigger efficiencies in data and MC and related data/MC scale-factors.
  * The trigger efficiencies are parametrized as function of pT, eta, and phi of the offline reconstructed tau,
- * cf. https://indico.cern.ch/event/700928/contributions/2883477/attachments/1596523/2529036/Ruggles_TauTriggers_TauPOG_20180207_v4.pdf 
+ * cf. https://indico.cern.ch/event/700928/contributions/2883477/attachments/1596523/2529036/Ruggles_TauTriggers_TauPOG_20180207_v4.pdf
  *
  * \authors Tyler Ruggles, Wisconsin; Christian Veelken, Tallin
  *
@@ -52,15 +52,14 @@ protected:
   std::string tauWP_;
   std::string wpType_;
 
-  std::map<int, const TF1*> fitDataMap_;
-  std::map<int, const TF1*> fitMCMap_;
-  std::map<int, const TH1*> fitUncDataMap_;
-  std::map<int, const TH1*> fitUncMCMap_;
-  std::map<int, const TH2*> effEtaPhiDataMap_;
-  std::map<int, const TH2*> effEtaPhiMCMap_;
-  std::map<int, const TH2*> effEtaPhiAvgDataMap_;
-  std::map<int, const TH2*> effEtaPhiAvgMCMap_;
+  std::map<int, TF1*> fitDataMap_;
+  std::map<int, TF1*> fitMCMap_;
+  std::map<int, TH1*> fitUncDataMap_;
+  std::map<int, TH1*> fitUncMCMap_;
+  std::map<int, TH2*> effEtaPhiDataMap_;
+  std::map<int, TH2*> effEtaPhiMCMap_;
+  std::map<int, TH2*> effEtaPhiAvgDataMap_;
+  std::map<int, TH2*> effEtaPhiAvgMCMap_;
 };
 
 #endif // TauTriggerSFs2017_h
-

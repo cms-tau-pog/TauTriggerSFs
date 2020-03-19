@@ -6,9 +6,9 @@
 #include <assert.h> // assert
 #include <cmath> // std::sqrt
 
-const TH1* loadTH1(const TFile* inputFile, const std::string& histogramName)
+TH1* loadTH1(TFile* inputFile, const std::string& histogramName)
 {
-  const TH1* histogram = dynamic_cast<TH1*>((const_cast<TFile*>(inputFile))->Get(histogramName.data()));
+  TH1* histogram = dynamic_cast<TH1*>(inputFile->Get(histogramName.data()));
   if ( !histogram ) {
     std::cerr << "Failed to load histogram = '" << histogramName << "' from input file !!" << std::endl;
     assert(0);
@@ -17,9 +17,9 @@ const TH1* loadTH1(const TFile* inputFile, const std::string& histogramName)
 }
 
 
-const TH2* loadTH2(const TFile* inputFile, const std::string& histogramName)
+TH2* loadTH2(TFile* inputFile, const std::string& histogramName)
 {
-  const TH2* histogram = dynamic_cast<TH2*>((const_cast<TFile*>(inputFile))->Get(histogramName.data()));
+  TH2* histogram = dynamic_cast<TH2*>(inputFile->Get(histogramName.data()));
   if ( !histogram ) {
     std::cerr << "Failed to load histogram = '" << histogramName << "' from input file !!" << std::endl;
     assert(0);
@@ -28,9 +28,9 @@ const TH2* loadTH2(const TFile* inputFile, const std::string& histogramName)
 }
 
 
-const TF1* loadTF1(const TFile* inputFile, const std::string& functionName)
+TF1* loadTF1(TFile* inputFile, const std::string& functionName)
 {
-  const TF1* function = dynamic_cast<TF1*>((const_cast<TFile*>(inputFile))->Get(functionName.data()));
+  TF1* function = dynamic_cast<TF1*>(inputFile->Get(functionName.data()));
   if ( !function ) {
     std::cerr << "Failed to load function = '" << functionName << "' from input file !!" << std::endl;
     assert(0);
@@ -124,7 +124,8 @@ TauTriggerSFs2017::~TauTriggerSFs2017()
 }
 
 
-double getEfficiency(double pt, double eta, double phi, const TF1* fit, const TH1* uncHist, const TH2* etaPhiHist, const TH2* etaPhiAvgHist, const std::string uncert="Nominal")
+double getEfficiency(double pt, double eta, double phi, const TF1* fit, TH1* uncHist, TH2* etaPhiHist,
+                     TH2* etaPhiAvgHist, const std::string& uncert="Nominal")
 {
   double pt_checked = ptCheck( pt );
   double eff = fit->Eval( pt_checked );
@@ -137,8 +138,8 @@ double getEfficiency(double pt, double eta, double phi, const TF1* fit, const TH
       std::cerr << "Uncertainties are provided using 'Up'/'Down'. You provided uncert = '" << uncert << "'"<< std::endl;
       assert(0);
     }
-    if (uncert == "Up") eff += uncHist->GetBinError( (const_cast<TH1*>(uncHist))->FindBin( pt_checked ) );
-    else                eff -= uncHist->GetBinError( (const_cast<TH1*>(uncHist))->FindBin( pt_checked ) );
+    if (uncert == "Up") eff += uncHist->GetBinError( uncHist->FindBin( pt_checked ) );
+    else                eff -= uncHist->GetBinError( uncHist->FindBin( pt_checked ) );
   }
 
   // Adjust SF based on (eta, phi) location
@@ -148,8 +149,8 @@ double getEfficiency(double pt, double eta, double phi, const TF1* fit, const TH
   if      (eta ==  2.1) eta =  2.09;
   else if (eta == -2.1) eta = -2.09;
 
-  double etaPhiVal = etaPhiHist->GetBinContent( (const_cast<TH2*>(etaPhiHist))->FindBin( eta, phi ) );
-  double etaPhiAvg = etaPhiAvgHist->GetBinContent( (const_cast<TH2*>(etaPhiAvgHist))->FindBin( eta, phi ) );
+  double etaPhiVal = etaPhiHist->GetBinContent( etaPhiHist->FindBin( eta, phi ) );
+  double etaPhiAvg = etaPhiAvgHist->GetBinContent( etaPhiAvgHist->FindBin( eta, phi ) );
   if (etaPhiAvg <= 0.)
   {
     std::cout << Form("One of the provided tau (eta, phi) values (%3.3f, %3.3f) is outside the boundary of triggering taus", eta, phi) << std::endl;
