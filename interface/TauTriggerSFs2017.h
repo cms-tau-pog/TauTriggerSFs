@@ -26,7 +26,7 @@ class TauTriggerSFs2017
 {
 public:
 
-  TauTriggerSFs2017(const std::string& inputFileName, const std::string& inputFileNameKIT, const std::string& trigger, const std::string& year, const std::string& tauWP = "medium", const std::string& wpType = "MVAv2");
+  TauTriggerSFs2017(const std::string& inputFileName, const std::string& inputFileNameEmb, const std::string& trigger, const std::string& year, const std::string& tauWP = "medium", const std::string& wpType = "MVAv2");
   ~TauTriggerSFs2017();
 
   // Return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
@@ -35,9 +35,9 @@ public:
   double getTriggerEfficiencyDataUncertDown(double pt, double eta, double phi, int dm) const; // Data efficiency -1 sigma uncertainty
 
   // Return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
-  double getTriggerEfficiencyKITData(double pt, double eta, double phi, int dm) const;           // Nominal data efficiency
-  double getTriggerEfficiencyKITDataUncertUp(double pt, double eta, double phi, int dm) const;   // Data efficiency +1 sigma uncertainty
-  double getTriggerEfficiencyKITDataUncertDown(double pt, double eta, double phi, int dm) const; // Data efficiency -1 sigma uncertainty
+  double getTriggerEfficiencyEmbData(double pt, double eta, double phi, int dm) const;           // Nominal data efficiency
+  double getTriggerEfficiencyEmbDataUncertUp(double pt, double eta, double phi, int dm) const;   // Data efficiency +1 sigma uncertainty
+  double getTriggerEfficiencyEmbDataUncertDown(double pt, double eta, double phi, int dm) const; // Data efficiency -1 sigma uncertainty
 
   // Return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
   double getTriggerEfficiencyMC(double pt, double eta, double phi, int dm) const;           // Nominal MC efficiency
@@ -45,23 +45,23 @@ public:
   double getTriggerEfficiencyMCUncertDown(double pt, double eta, double phi, int dm) const; // MC efficiency -1 sigma uncertainty
 
   // Return the EMB efficiency or the +/- 1 sigma uncertainty shifted efficiency
-  double getTriggerEfficiencyEMB(double pt, double eta, double phi, int dm) const;           // Nominal EMB efficiency
-  double getTriggerEfficiencyEMBUncertUp(double pt, double eta, double phi, int dm) const;   // EMB efficiency +1 sigma uncertainty
-  double getTriggerEfficiencyEMBUncertDown(double pt, double eta, double phi, int dm) const; // EMB efficiency -1 sigma uncertainty
+  double getTriggerEfficiencyEmb(double pt, double eta, double phi, int dm) const;           // Nominal EMB efficiency
+  double getTriggerEfficiencyEmbUncertUp(double pt, double eta, double phi, int dm) const;   // EMB efficiency +1 sigma uncertainty
+  double getTriggerEfficiencyEmbUncertDown(double pt, double eta, double phi, int dm) const; // EMB efficiency -1 sigma uncertainty
 
   // Return the Scale Factor or the +/- 1 sigma shifter Scale Factor
   double getTriggerScaleFactor(double pt, double eta, double phi, int dm) const;                           // Nominal Scale Factor
   double getTriggerScaleFactorUncert(double pt, double eta, double phi, int dm, const std::string& uncert) const; // Shifted Scale Factor
 
   // Return the EMB Scale Factor or the +/- 1 sigma shifter Scale Factor
-  double getTriggerScaleFactorEMB(double pt, double eta, double phi, int dm) const;                           // Nominal Scale Factor
-  double getTriggerScaleFactorEMBUncert(double pt, double eta, double phi, int dm, const std::string& uncert) const; // Shifted Scale Factor
+  double getTriggerScaleFactorEmb(double pt, double eta, double phi, int dm) const;                           // Nominal Scale Factor
+  double getTriggerScaleFactorEmbUncert(double pt, double eta, double phi, int dm, const std::string& uncert) const; // Shifted Scale Factor
 
 protected:
   std::string inputFileName_;
   TFile* inputFile_;
-  std::string inputFileNameKIT_;
-  TFile* inputFileKIT_;
+  std::string inputFileNameEmb_;
+  TFile* inputFileEmb_;
 
   std::string trigger_;
   std::string year_;
@@ -70,21 +70,21 @@ protected:
   std::vector<int> allowedDMs_;
 
   std::map<int, TF1*> fitDataMap_;
-  std::map<int, TF1*> fitKITDataMap_;
+  std::map<int, TF1*> fitEmbDataMap_;
   std::map<int, TF1*> fitMCMap_;
-  std::map<int, TF1*> fitEMBMap_;
+  std::map<int, TF1*> fitEmbMap_;
   std::map<int, TH1*> fitUncDataMap_;
-  std::map<int, TH1*> fitUncKITDataMap_;
+  std::map<int, TH1*> fitUncEmbDataMap_;
   std::map<int, TH1*> fitUncMCMap_;
-  std::map<int, TH1*> fitUncEMBMap_;
+  std::map<int, TH1*> fitUncEmbMap_;
   std::map<int, TH2*> effEtaPhiDataMap_;
-  std::map<int, TH2*> effEtaPhiKITDataMap_;
+  std::map<int, TH2*> effEtaPhiEmbDataMap_;
   std::map<int, TH2*> effEtaPhiMCMap_;
-  std::map<int, TH2*> effEtaPhiEMBMap_;
+  std::map<int, TH2*> effEtaPhiEmbMap_;
   std::map<int, TH2*> effEtaPhiAvgDataMap_;
-  std::map<int, TH2*> effEtaPhiAvgKITDataMap_;
+  std::map<int, TH2*> effEtaPhiAvgEmbDataMap_;
   std::map<int, TH2*> effEtaPhiAvgMCMap_;
-  std::map<int, TH2*> effEtaPhiAvgEMBMap_;
+  std::map<int, TH2*> effEtaPhiAvgEmbMap_;
 };
 
 #endif // TauTriggerSFs2017_h
