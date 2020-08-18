@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <assert.h> // assert
 #include <cmath> // std::sqrt
+#include "boost/format.hpp" // boost::format
 
 TH1* loadTH1(TFile* inputFile, const std::string& histogramName)
 {
@@ -56,23 +57,34 @@ int dmCheck(int dm )
 }
 
 
-TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std::string& inputFileNameEmb, const std::string& trigger, const std::string& year, const std::string& tauWP, const std::string& wpType)
-  : inputFileName_(inputFileName),
-    inputFileNameEmb_(inputFileNameEmb),
-    trigger_(trigger),
+TauTriggerSFs2017::TauTriggerSFs2017(const std::string& trigger, const std::string& year, const std::string& tauWP, const std::string& wpType, const bool& emb_sfs)
+  : trigger_(trigger),
     year_(year),
     tauWP_(tauWP),
-    wpType_(wpType)
+    wpType_(wpType),
+    provide_emb_sfs_(emb_sfs)
 {
-  inputFile_ = new TFile(inputFileName_.data());
-  inputFileEmb_ = new TFile(inputFileNameEmb_.data());
+  if (provide_emb_sfs_ && wpType_ != "DeepTau")
+  {
+      std::cerr << "Embedded scale factors are currently only provided for the DeepTau ID. ";
+      std::cerr << "You provided tau ID type: " << wpType_ << std::endl;
+      assert(0);
+  }
+  if (!provide_emb_sfs_ && wpType_ == "DeepTau")
+  {
+      std::cerr << "MC scale factors for the DeepTau ID are provided via the SFProvider interface. Aborting..." << std::endl;
+      assert(0);
+  }
+
+  std::string inputFileName = (boost::format("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s.root") % std::getenv("CMSSW_BASE") % year).str();
+  if (provide_emb_sfs_)
+  {
+      inputFileName = (boost::format("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s_Embedded_deeptau.root") % std::getenv("CMSSW_BASE") % year).str();
+  }
+  inputFile_ = new TFile(inputFileName.data());
 
   if ( !inputFile_ ) {
-    std::cerr << "Failed to open input file = '" << inputFileName_ << "' !!" << std::endl;
-    assert(0);
-  }
-  if ( !inputFileEmb_ ) {
-    std::cerr << "Failed to open input file = '" << inputFileNameEmb_ << "' !!" << std::endl;
+    std::cerr << "Failed to open input file = '" << inputFileName << "' !!" << std::endl;
     assert(0);
   }
 
@@ -82,27 +94,19 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   {
       allowedDMs_.push_back(11);
   }
-
+  std::string sim_type = provide_emb_sfs_ ? "EMB" : "MC";
   // Load the TF1s containing the analytic best-fit results
   // This is done per decay mode: 0, 1, 10.
   fitDataMap_ [ 0] = loadTF1(inputFile_, Form("%s_%s%s_dm0_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitDataMap_ [ 1] = loadTF1(inputFile_, Form("%s_%s%s_dm1_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitDataMap_ [10] = loadTF1(inputFile_, Form("%s_%s%s_dm10_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitEmbDataMap_ [ 0] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm0_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitEmbDataMap_ [ 1] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm1_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitEmbDataMap_ [10] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm10_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitMCMap_ [ 0] = loadTF1(inputFile_, Form("%s_%s%s_dm0_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitMCMap_ [ 1] = loadTF1(inputFile_, Form("%s_%s%s_dm1_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitMCMap_ [10] = loadTF1(inputFile_, Form("%s_%s%s_dm10_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitEmbMap_ [ 0] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm0_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitEmbMap_ [ 1] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm1_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitEmbMap_ [10] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm10_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+  fitMCMap_ [ 0] = loadTF1(inputFile_, Form("%s_%s%s_dm0_%s_fit", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
+  fitMCMap_ [ 1] = loadTF1(inputFile_, Form("%s_%s%s_dm1_%s_fit", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
+  fitMCMap_ [10] = loadTF1(inputFile_, Form("%s_%s%s_dm10_%s_fit", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
   if (wpType == "DeepTau")
   {
       fitDataMap_ [11] = loadTF1(inputFile_, Form("%s_%s%s_dm11_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-      fitEmbDataMap_ [11] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm11_DATA_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-      fitMCMap_ [11] = loadTF1(inputFile_, Form("%s_%s%s_dm11_MC_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
-      fitEmbMap_ [11] = loadTF1(inputFileEmb_, Form("%s_%s%s_dm11_EMB_fit", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitMCMap_ [11] = loadTF1(inputFile_, Form("%s_%s%s_dm11_%s_fit", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
   }
 
 
@@ -111,21 +115,13 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   fitUncDataMap_ [ 0] = loadTH1(inputFile_, Form("%s_%s%s_dm0_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitUncDataMap_ [ 1] = loadTH1(inputFile_, Form("%s_%s%s_dm1_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
   fitUncDataMap_ [10] = loadTH1(inputFile_, Form("%s_%s%s_dm10_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncEmbDataMap_ [ 0] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm0_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncEmbDataMap_ [ 1] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm1_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncEmbDataMap_ [10] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm10_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncMCMap_ [ 0] = loadTH1(inputFile_, Form("%s_%s%s_dm0_MC_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncMCMap_ [ 1] = loadTH1(inputFile_, Form("%s_%s%s_dm1_MC_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncMCMap_ [10] = loadTH1(inputFile_, Form("%s_%s%s_dm10_MC_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncEmbMap_ [ 0] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm0_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncEmbMap_ [ 1] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm1_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-  fitUncEmbMap_ [10] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm10_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+  fitUncMCMap_ [ 0] = loadTH1(inputFile_, Form("%s_%s%s_dm0_%s_errorBand", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
+  fitUncMCMap_ [ 1] = loadTH1(inputFile_, Form("%s_%s%s_dm1_%s_errorBand", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
+  fitUncMCMap_ [10] = loadTH1(inputFile_, Form("%s_%s%s_dm10_%s_errorBand", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
   if (wpType == "DeepTau")
   {
       fitUncDataMap_ [11] = loadTH1(inputFile_, Form("%s_%s%s_dm11_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-      fitUncEmbDataMap_ [11] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm11_DATA_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-      fitUncMCMap_ [11] = loadTH1(inputFile_, Form("%s_%s%s_dm11_MC_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
-      fitUncEmbMap_ [11] = loadTH1(inputFileEmb_, Form("%s_%s%s_dm11_EMB_errorBand", trigger_.data(), tauWP_.data(), wpType_.data()));
+      fitUncMCMap_ [11] = loadTH1(inputFile_, Form("%s_%s%s_dm11_%s_errorBand", trigger_.data(), tauWP_.data(), wpType_.data(), sim_type.data()));
   }
 
 
@@ -141,21 +137,13 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   effEtaPhiDataMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiDataMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiDataMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiEmbDataMap_ [ 0] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm0_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiEmbDataMap_ [ 1] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm1_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiEmbDataMap_ [10] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm10_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_MC", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_MC", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_MC", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiEmbMap_ [ 0] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm0_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiEmbMap_ [ 1] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm1_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiEmbMap_ [10] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm10_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_%s", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
+  effEtaPhiMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_%s", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
+  effEtaPhiMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_%s", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
   if (wpType == "DeepTau")
   {
       effEtaPhiDataMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-      effEtaPhiEmbDataMap_ [11] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm11_DATA", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-      effEtaPhiMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_MC", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-      effEtaPhiEmbMap_ [11] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm11_EMB", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_%s", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
   }
 
   // Eta Phi Averages
@@ -163,21 +151,13 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
   effEtaPhiAvgDataMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiAvgDataMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
   effEtaPhiAvgDataMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgEmbDataMap_ [ 0] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm0_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgEmbDataMap_ [ 1] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm1_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgEmbDataMap_ [10] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm10_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_MC_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_MC_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_MC_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgEmbMap_ [ 0] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm0_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgEmbMap_ [ 1] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm1_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-  effEtaPhiAvgEmbMap_ [10] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm10_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+  effEtaPhiAvgMCMap_ [ 0] = loadTH2(inputFile_, Form("%s_%s%s_dm0_%s_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
+  effEtaPhiAvgMCMap_ [ 1] = loadTH2(inputFile_, Form("%s_%s%s_dm1_%s_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
+  effEtaPhiAvgMCMap_ [10] = loadTH2(inputFile_, Form("%s_%s%s_dm10_%s_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
   if (wpType == "DeepTau")
   {
       effEtaPhiAvgDataMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-      effEtaPhiAvgEmbDataMap_ [11] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm11_DATA_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-      effEtaPhiAvgMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_MC_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
-      effEtaPhiAvgEmbMap_ [11] = loadTH2(inputFileEmb_, Form("%s_%s%s_dm11_EMB_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data()));
+      effEtaPhiAvgMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_%s_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
   }
 }
 
@@ -185,7 +165,6 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std
 TauTriggerSFs2017::~TauTriggerSFs2017()
 {
   delete inputFile_;
-  delete inputFileEmb_;
 }
 
 
@@ -279,55 +258,6 @@ double TauTriggerSFs2017::getTriggerEfficiencyDataUncertDown(double pt, double e
 }
 
 
-// Return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
-double TauTriggerSFs2017::getTriggerEfficiencyEmbData(double pt, double eta, double phi, int dm) const
-{
-  int dm_checked = dmCheck( dm );
-  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
-  {
-    std::cerr << Form("Efficiencies only provided for DMs ");
-    for (auto dm: allowedDMs_)
-    {
-        std::cerr << dm << " ";
-    }
-    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
-    assert(0);
-  }
-  return getEfficiency(pt, eta, phi, fitEmbDataMap_.at(dm_checked), fitUncEmbDataMap_.at(dm_checked), effEtaPhiEmbDataMap_.at(dm_checked), effEtaPhiAvgEmbDataMap_.at(dm_checked));
-}
-
-double TauTriggerSFs2017::getTriggerEfficiencyEmbDataUncertUp(double pt, double eta, double phi, int dm) const
-{
-  int dm_checked = dmCheck( dm );
-  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
-  {
-    std::cerr << Form("Efficiencies only provided for DMs ");
-    for (auto dm: allowedDMs_)
-    {
-        std::cerr << dm << " ";
-    }
-    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
-    assert(0);
-  }
-  return getEfficiency(pt, eta, phi, fitEmbDataMap_.at(dm_checked), fitUncEmbDataMap_.at(dm_checked), effEtaPhiEmbDataMap_.at(dm_checked), effEtaPhiAvgEmbDataMap_.at(dm_checked), "Up");
-}
-
-double TauTriggerSFs2017::getTriggerEfficiencyEmbDataUncertDown(double pt, double eta, double phi, int dm) const
-{
-  int dm_checked = dmCheck( dm );
-  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
-  {
-    std::cerr << Form("Efficiencies only provided for DMs ");
-    for (auto dm: allowedDMs_)
-    {
-        std::cerr << dm << " ";
-    }
-    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
-    assert(0);
-  }
-  return getEfficiency(pt, eta, phi, fitEmbDataMap_.at(dm_checked), fitUncEmbDataMap_.at(dm_checked), effEtaPhiEmbDataMap_.at(dm_checked), effEtaPhiAvgEmbDataMap_.at(dm_checked), "Down");
-}
-
 // Return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
 double TauTriggerSFs2017::getTriggerEfficiencyMC(double pt, double eta, double phi, int dm) const
 {
@@ -377,56 +307,6 @@ double TauTriggerSFs2017::getTriggerEfficiencyMCUncertDown(double pt, double eta
   return getEfficiency(pt, eta, phi, fitMCMap_.at(dm_checked), fitUncMCMap_.at(dm_checked), effEtaPhiMCMap_.at(dm_checked), effEtaPhiAvgMCMap_.at(dm_checked), "Down");
 }
 
-// Return the EMB efficiency or the +/- 1 sigma uncertainty shifted efficiency
-double TauTriggerSFs2017::getTriggerEfficiencyEmb(double pt, double eta, double phi, int dm) const
-{
-  int dm_checked = dmCheck( dm );
-  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
-  {
-    std::cerr << Form("Efficiencies only provided for DMs ");
-    for (auto dm: allowedDMs_)
-    {
-        std::cerr << dm << " ";
-    }
-    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
-    assert(0);
-  }
-  return getEfficiency(pt, eta, phi, fitEmbMap_.at(dm_checked), fitUncEmbMap_.at(dm_checked), effEtaPhiEmbMap_.at(dm_checked), effEtaPhiAvgEmbMap_.at(dm_checked));
-}
-
-double TauTriggerSFs2017::getTriggerEfficiencyEmbUncertUp(double pt, double eta, double phi, int dm) const
-{
-  int dm_checked = dmCheck( dm );
-  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
-  {
-    std::cerr << Form("Efficiencies only provided for DMs ");
-    for (auto dm: allowedDMs_)
-    {
-        std::cerr << dm << " ";
-    }
-    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
-    assert(0);
-  }
-  return getEfficiency(pt, eta, phi, fitEmbMap_.at(dm_checked), fitUncEmbMap_.at(dm_checked), effEtaPhiEmbMap_.at(dm_checked), effEtaPhiAvgEmbMap_.at(dm_checked), "Up");
-}
-
-double TauTriggerSFs2017::getTriggerEfficiencyEmbUncertDown(double pt, double eta, double phi, int dm) const
-{
-  int dm_checked = dmCheck( dm );
-  if (std::find(allowedDMs_.begin(), allowedDMs_.end(), dm_checked) == allowedDMs_.end())
-  {
-    std::cerr << Form("Efficiencies only provided for DMs ");
-    for (auto dm: allowedDMs_)
-    {
-        std::cerr << dm << " ";
-    }
-    std::cerr << Form(". You provided DM %i", dm_checked) << std::endl;
-    assert(0);
-  }
-  return getEfficiency(pt, eta, phi, fitEmbMap_.at(dm_checked), fitUncEmbMap_.at(dm_checked), effEtaPhiEmbMap_.at(dm_checked), effEtaPhiAvgEmbMap_.at(dm_checked), "Down");
-}
-
-
 // Return the data/MC scale factor
 double TauTriggerSFs2017::getTriggerScaleFactor(double pt, double eta, double phi, int dm) const
 {
@@ -443,25 +323,6 @@ double TauTriggerSFs2017::getTriggerScaleFactor(double pt, double eta, double ph
     return 0.;
   }
   double sf = effData / effMC;
-  return sf;
-}
-
-// Return the data/MC scale factor
-double TauTriggerSFs2017::getTriggerScaleFactorEmb(double pt, double eta, double phi, int dm) const
-{
-  double pt_checked = ptCheck( pt );
-  int dm_checked = dmCheck( dm );
-  double effEmbData = getTriggerEfficiencyEmbData( pt_checked, eta, phi, dm_checked );
-  double effEmb = getTriggerEfficiencyEmb( pt_checked, eta, phi, dm_checked );
-
-  if ( effEmb < 1e-5 )
-  {
-    std::cerr << "Eff Emb is suspiciously low. Please contact Tau POG." << std::endl;
-    std::cerr << Form(" - %s Trigger SF for Tau ID: %s   WP: %s   pT: %f   eta: %f   phi: %f", trigger_.data(), wpType_.data(), tauWP_.data(), pt, eta, phi) << std::endl;
-    std::cerr << Form(" - Emb Efficiency = %f", effEmb) << std::endl;
-    return 0.;
-  }
-  double sf = effEmbData / effEmb;
   return sf;
 }
 
@@ -498,43 +359,6 @@ double TauTriggerSFs2017::getTriggerScaleFactorUncert(double pt, double eta, dou
 
   double deltaSF = std::sqrt( (relDataDiff*relDataDiff) + (relMCDiff*relMCDiff) );
   double sf = (effData / effMC);
-  if (uncert == "Up") return sf * (1. + deltaSF);
-  else                return sf * (1. - deltaSF);
-}
-
-
-// return the data/EMB scale factor with +1/-1 sigma uncertainty.
-// Data and EMB fit uncertainties are treated as uncorrelated.
-// The calculated uncertainties are symmetric. Do error propagation
-// for simple division. Using getTriggerEfficiencyXXXUncertDown instead
-// of Up ensures we have the full uncertainty reported. Up sometimes
-// is clipped by efficiency max of 1.0.
-double TauTriggerSFs2017::getTriggerScaleFactorEmbUncert(double pt, double eta, double phi, int dm, const std::string& uncert) const
-{
-  if ( (uncert!="Up") && (uncert!="Down") )
-  {
-    std::cerr << "Uncertainties are provided using 'Up'/'Down'. You provided uncert = '" << uncert << "'"<< std::endl;
-    assert(0);
-  }
-
-  double pt_checked = ptCheck( pt );
-  int dm_checked = dmCheck( dm );
-
-  double effEmbData = getTriggerEfficiencyEmbData( pt_checked, eta, phi, dm_checked );
-  double effEmbDataDown = getTriggerEfficiencyEmbDataUncertDown( pt_checked, eta, phi, dm_checked );
-  double relEmbDataDiff = (effEmbData - effEmbDataDown) / effEmbData;
-
-  double effEmb = getTriggerEfficiencyEmb( pt_checked, eta, phi, dm_checked );
-  double effEmbDown = getTriggerEfficiencyEmbUncertDown( pt_checked, eta, phi, dm_checked );
-  if (effEmb < 1e-5)
-  {
-    // Already printed an error for the nominal case...
-    return 0.0;
-  }
-  double relEmbDiff = (effEmb - effEmbDown) / effEmb;
-
-  double deltaSF = std::sqrt( (relEmbDataDiff*relEmbDataDiff) + (relEmbDiff*relEmbDiff) );
-  double sf = (effEmbData / effEmb);
   if (uncert == "Up") return sf * (1. + deltaSF);
   else                return sf * (1. - deltaSF);
 }
