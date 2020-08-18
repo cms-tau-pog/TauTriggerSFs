@@ -1,3 +1,7 @@
+<use name="boost"/>
 <bin file="testSFProvider.cc">
+    <use name="TauAnalysisTools/TauTriggerSFs" />
+</bin>
+<bin file="testTauTriggerSFs.cc" name="testTauTriggerSFs">
     <use name="TauAnalysisTools/TauTriggerSFs" />
 </bin>
