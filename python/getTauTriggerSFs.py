@@ -26,9 +26,9 @@ class getTauTriggerSFs :
         self.tauWP = tauWP
         self.wpType = wpType
         self.provide_emb_sfs = emb_sfs
-        # assert( self.tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] ), "You must choose a WP from: vloose, loose, medium, tight, vtight, or vvtight"
-        assert( self.tauWP in ['vvvloose', 'vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'] ), "You must choose a WP from: vloose, loose, medium, tight, vtight, or vvtight"
         assert( self.wpType in ['MVAv2', 'dR0p3', 'DeepTau'] ), "Choose from three provided ID types: 'MVAv2', 'dR0p3' and 'DeepTau'. 'MVAv2' uses dR0p5, and 'dR0p3' is also an MVA-based ID."
+        assert( (self.wpType == "MVAv2" and self.tauWP in ['vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight'])
+                or (self.wpType == "DeepTau" and self.tauWP in ['vvvloose', 'vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight']) ), "You must choose a WP from: vloose, loose, medium, tight, vtight, or vvtight for MVA Tau IDs and vvvloose, vvloose, vloose, loose, medium, tight, vtight, or vvtight for the DeepTau ID"
         assert( (self.wpType == 'MVAv2' and not self.provide_emb_sfs)
                 or (self.wpType == 'DeepTau' and self.provide_emb_sfs) ), "Tau POG is currently only providing MC efficiencies for MVAv2 and embedded efficiencies for DeepTau, sorry."
         assert( self.year in [2016, 2017, 2018] ), "Choose which year trigger efficiencies you need."
@@ -144,17 +144,17 @@ class getTauTriggerSFs :
     # return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyData( self, pt, eta, phi, dm) :
         dm = self.dmCheck( dm )
-        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(self.available_dms), dm)
+        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(map(str, self.available_dms)), dm)
         return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Nominal')
     def getTriggerEfficiencyDataUncertUp( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
-        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(self.available_dms), dm)
+        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(map(str, self.available_dms)), dm)
         return self.getEfficiency(  pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Up' )
     def getTriggerEfficiencyDataUncertDown( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
-        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(self.available_dms), dm)
+        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(map(str, self.available_dms)), dm)
         return self.getEfficiency( pt, eta, phi, self.fitDataMap[ dm ], self.fitUncDataMap[ dm ], \
             self.effEtaPhiDataMap[ dm ], self.effEtaPhiAvgDataMap[ dm ], 'Down' )
 
@@ -162,17 +162,17 @@ class getTauTriggerSFs :
     # return the MC efficiency or the +/- 1 sigma uncertainty shifted efficiency
     def getTriggerEfficiencyMC( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
-        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(self.available_dms), dm)
+        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(map(str, self.available_dms)), dm)
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Nominal')
     def getTriggerEfficiencyMCUncertUp( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
-        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(self.available_dms), dm)
+        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(map(str, self.available_dms)), dm)
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Up'  )
     def getTriggerEfficiencyMCUncertDown( self, pt, eta, phi, dm ) :
         dm = self.dmCheck( dm )
-        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(self.available_dms), dm)
+        assert( dm in self.available_dms ), "Efficiencies only provided for DMs %s.  You provided DM %i" % (", ".join(map(str, self.available_dms)), dm)
         return self.getEfficiency( pt, eta, phi, self.fitMCMap[ dm ], self.fitUncMCMap[ dm ], \
             self.effEtaPhiMCMap[ dm ], self.effEtaPhiAvgMCMap[ dm ], 'Down' )
 
