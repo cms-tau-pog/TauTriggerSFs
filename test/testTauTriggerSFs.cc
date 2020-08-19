@@ -1,5 +1,4 @@
 #include <iostream>
-#include "boost/format.hpp"
 
 #include "TString.h"
 #include "TauAnalysisTools/TauTriggerSFs/interface/TauTriggerSFs2017.h"
@@ -33,7 +32,7 @@ int main()
                         double eff_emb_data = sf_reader.getTriggerEfficiencyData(pt, 1.3, 0.5, dm);
                         double eff_emb = sf_reader.getTriggerEfficiencyMC(pt, 1.3, 0.5, dm);
                         double sf_emb = sf_reader.getTriggerScaleFactor(pt, 1.3, 0.5, dm);
-                        std::cout << boost::format("%s \t %s \t %s \t %s \t %s") % pt % eff_emb_data % eff_emb % (eff_emb_data / eff_emb) % sf_emb << std::endl;
+                        std::cout << Form("%f \t %f \t %f \t %f \t %f", pt, eff_emb_data, eff_emb, (eff_emb_data / eff_emb), sf_emb) << std::endl;
                     }
                 }
             }

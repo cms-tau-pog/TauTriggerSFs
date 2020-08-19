@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <assert.h> // assert
 #include <cmath> // std::sqrt
-#include "boost/format.hpp" // boost::format
 
 TH1* loadTH1(TFile* inputFile, const std::string& histogramName)
 {
@@ -75,11 +74,10 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& trigger, const std::stri
       std::cerr << "MC scale factors for the DeepTau ID are provided via the SFProvider interface. Aborting..." << std::endl;
       assert(0);
   }
-
-  std::string inputFileName = (boost::format("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s.root") % std::getenv("CMSSW_BASE") % year).str();
+  std::string inputFileName = std::string(Form("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s.root", std::getenv("CMSSW_BASE"), year.data()));
   if (provide_emb_sfs_)
   {
-      inputFileName = (boost::format("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s_Embedded_deeptau.root") % std::getenv("CMSSW_BASE") % year).str();
+      inputFileName = std::string(Form("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s_Embedded_deeptau.root", std::getenv("CMSSW_BASE"), year.data()));
   }
   inputFile_ = new TFile(inputFileName.data());
 
