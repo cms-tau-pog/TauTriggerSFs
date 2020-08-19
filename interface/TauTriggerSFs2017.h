@@ -27,6 +27,7 @@ class TauTriggerSFs2017
 public:
 
   TauTriggerSFs2017(const std::string& trigger, const std::string& year, const std::string& tauWP = "medium", const std::string& wpType = "MVAv2", const bool& emb_sfs=false);
+  TauTriggerSFs2017(const std::string& inputFileName, const std::string& trigger, const std::string& year, const std::string& tauWP = "medium", const std::string& wpType = "MVAv2", const bool& emb_sfs=false);
   ~TauTriggerSFs2017();
 
   // Return the data efficiency or the +/- 1 sigma uncertainty shifted efficiency
@@ -44,6 +45,7 @@ public:
   double getTriggerScaleFactorUncert(double pt, double eta, double phi, int dm, const std::string& uncert) const; // Shifted Scale Factor
 
 protected:
+  std::string inputFileName_;
   TFile* inputFile_;
 
   std::string trigger_;

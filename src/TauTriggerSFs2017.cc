@@ -56,8 +56,9 @@ int dmCheck(int dm )
 }
 
 
-TauTriggerSFs2017::TauTriggerSFs2017(const std::string& trigger, const std::string& year, const std::string& tauWP, const std::string& wpType, const bool& emb_sfs)
-  : trigger_(trigger),
+TauTriggerSFs2017::TauTriggerSFs2017(const std::string& inputFileName, const std::string& trigger, const std::string& year, const std::string& tauWP, const std::string& wpType, const bool& emb_sfs)
+  : inputFileName_(inputFileName),
+    trigger_(trigger),
     year_(year),
     tauWP_(tauWP),
     wpType_(wpType),
@@ -74,13 +75,8 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& trigger, const std::stri
       std::cerr << "MC scale factors for the DeepTau ID are provided via the SFProvider interface. Aborting..." << std::endl;
       assert(0);
   }
-  std::string inputFileName = std::string(Form("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s.root", std::getenv("CMSSW_BASE"), year.data()));
-  if (provide_emb_sfs_)
-  {
-      inputFileName = std::string(Form("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s_Embedded_deeptau.root", std::getenv("CMSSW_BASE"), year.data()));
-  }
-  inputFile_ = new TFile(inputFileName.data());
 
+  inputFile_ = new TFile(inputFileName_.data());
   if ( !inputFile_ ) {
     std::cerr << "Failed to open input file = '" << inputFileName << "' !!" << std::endl;
     assert(0);
@@ -158,6 +154,15 @@ TauTriggerSFs2017::TauTriggerSFs2017(const std::string& trigger, const std::stri
       effEtaPhiAvgMCMap_ [11] = loadTH2(inputFile_, Form("%s_%s%s_dm11_%s_AVG", etaPhiTrigger.data(), etaPhiWP.data(), wpType_.data(), sim_type.data()));
   }
 }
+
+
+TauTriggerSFs2017::TauTriggerSFs2017(const std::string& trigger, const std::string& year, const std::string& tauWP, const std::string& wpType, const bool& emb_sfs)
+  : TauTriggerSFs2017((emb_sfs)? std::string(Form("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s_Embedded_deeptau.root", std::getenv("CMSSW_BASE"), year.data()))
+                               : std::string(Form("%s/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%s.root", std::getenv("CMSSW_BASE"), year.data())),
+                      trigger, year, tauWP, wpType, emb_sfs)
+{
+}
+
 
 
 TauTriggerSFs2017::~TauTriggerSFs2017()
