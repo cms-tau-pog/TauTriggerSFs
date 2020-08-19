@@ -17,7 +17,7 @@ from math import sqrt
 
 class getTauTriggerSFs :
 
-    def __init__( self, trigger, year=2017, tauWP='medium', wpType='MVAv2', emb_sfs=False ):
+    def __init__( self, trigger, year=2017, tauWP='medium', wpType='MVAv2', file_name=None, emb_sfs=False ):
 
         self.trigger = trigger
         assert( self.trigger in ['ditau', 'mutau', 'etau'] ), "Choose from: 'ditau', 'mutau', 'etau' triggers."
@@ -35,11 +35,14 @@ class getTauTriggerSFs :
         print "Loading Efficiencies for trigger %s usingTau %s ID WP %s for year %i based on %s samples" % (self.trigger, self.wpType, self.tauWP, self.year, "embedded" if self.provide_emb_sfs else "simulated")
 
         # Assume this is in CMSSW with the below path structure
-        base = os.environ['CMSSW_BASE']
-        if self.provide_emb_sfs:
-            self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%i_Embedded_deeptau.root' % self.year, 'r' )
+        if file_name is None:
+            base = os.environ['CMSSW_BASE']
+            if self.provide_emb_sfs:
+                self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%i_Embedded_deeptau.root' % self.year, 'r' )
+            else:
+                self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%i.root' % self.year, 'r' )
         else:
-            self.f = ROOT.TFile( base+'/src/TauAnalysisTools/TauTriggerSFs/data/tauTriggerEfficiencies%i.root' % self.year, 'r' )
+            self.f = ROOT.TFile( file_name, "r")
 
 
         if 'DeepTau' in self.wpType:
@@ -56,7 +59,7 @@ class getTauTriggerSFs :
         for dm in self.available_dms:
             self.fitDataMap[ dm ] = ROOT.gDirectory.Get('%s_%s%s_dm%i_DATA_fit' % (self.trigger, self.tauWP, self.wpType, dm ) )
             self.fitMCMap[ dm ] = ROOT.gDirectory.Get(hist_name % (self.trigger, self.tauWP, self.wpType, dm ) )
-        
+
 
         # Load the TH1s containing the analytic best-fit result in 1 GeV incriments and the associated uncertainty.
         # This is done per decay mode: 0, 1, 10.
@@ -66,7 +69,7 @@ class getTauTriggerSFs :
         for dm in self.available_dms:
             self.fitUncDataMap[ dm ] = self.f.Get('%s_%s%s_dm%i_DATA_errorBand' % (self.trigger, self.tauWP, self.wpType, dm ) )
             self.fitUncMCMap[ dm ] = self.f.Get(hist_name % (self.trigger, self.tauWP, self.wpType, dm ) )
-        
+
          # Load the TH1s containing the bin by bin values
         self.binnedSFMap = {}
         for dm in self.available_dms:
