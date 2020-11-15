@@ -16,6 +16,10 @@ class SFProvider:
         for dm in SFProvider.supported_decay_modes:
             for type_name, hist_dict in histograms.iteritems():
                 hist_name = '{}_{}_{}_dm{}_fitted'.format(type_name, channel, wp, dm)
+                # In case of vbf trigger, the efficiencies for the 3 prong decay modes are merged.
+                # Thus, load the merged histogram in both cases.
+                if channel == 'ditauvbf' and dm in [10, 11]:
+                    hist_name = '{}_{}_{}_dm1011_fitted'.format(type_name, channel, wp)
                 hist_dict[dm] = SFProvider._LoadHistogram(root_file, hist_name)
         root_file.Close()
 
