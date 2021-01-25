@@ -6,7 +6,7 @@
 int main()
 {
     static const std::vector<int> years = { 2016, 2017, 2018 };
-    static const std::vector<std::string> channels = { "ditau", "mutau", "etau", "ditauvbf"};
+    static const std::vector<std::string> channels = { "ditau", "mutau", "etau", "ditauvbf", "ditaucond"};
     static const std::vector<std::string> working_points = {
         "VVVLoose", "VVLoose", "VLoose", "Loose", "Medium", "Tight", "VTight", "VVTight"
     };
@@ -23,7 +23,7 @@ int main()
             const std::string file_name = ss_file_name.str();
 
             for(const auto& channel : channels) {
-                if (year == 2016 && channel == "ditauvbf")
+                if ((year == 2016 && channel == "ditauvbf") || (year != 2018 && channel == "ditaucond"))
                 {
                     continue;
                 }
