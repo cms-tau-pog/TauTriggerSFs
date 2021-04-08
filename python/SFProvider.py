@@ -4,6 +4,8 @@ class SFProvider:
     supported_decay_modes = [ 0, 1, 10, 11 ]
 
     def __init__(self, input_file, channel, wp):
+        if 'UL' in input_file:
+            SFProvider.supported_decay_modes = [ 0, 1, 10, 11, 1011]
         root_file = ROOT.TFile(input_file, "READ")
         if root_file.IsZombie():
             raise RuntimeError('tau_trigger::SFProvider: unable to open "{}".'.format(input_file))
