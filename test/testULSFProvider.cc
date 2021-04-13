@@ -12,7 +12,7 @@ int main()
     };
 
     static const std::vector<float> test_pts = { 45, 80, 120, 400 };
-    static const std::vector<int> decay_modes = { 0, 1, 10, 11,1011 };
+    static const std::vector<int> decay_modes = { 0, 1, 10, 11};
     static const std::vector<int> unc_scales = { -1, 0, 1 };
 
     try {

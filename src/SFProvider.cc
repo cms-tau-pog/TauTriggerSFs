@@ -1,14 +1,13 @@
 #include "TauAnalysisTools/TauTriggerSFs/interface/SFProvider.h"
-#include <boost/algorithm/string.hpp>
 #include <algorithm>
 #include <sstream>
-#include <iostream>
+
 #undef SFProvider_cxx
 
 namespace tau_trigger {
 
   const std::set<int> SFProvider::supported_decay_modes = { 0, 1, 10, 11};
-  std::set<int> SFProvider::comb_decay_modes = supported_decay_modes;
+  
 SFProvider::SFProvider(std::string_view input_file, std::string_view channel, std::string_view wp)
 {
     TFile root_file(input_file.data(), "READ");
@@ -18,22 +17,22 @@ SFProvider::SFProvider(std::string_view input_file, std::string_view channel, st
         throw std::runtime_error(ss.str());
     }
     
-    bool isUL = boost::algorithm::contains(input_file,"UL");
-    if(isUL){
-      comb_decay_modes = { 0, 1, 10, 11,1011};
-    }
     std::map<std::string, std::map<int, std::unique_ptr<TH1F>>*> histograms = {
         { "data", &eff_data }, { "mc", &eff_mc }, { "sf", &sf }
     };
-    for(int dm : comb_decay_modes) {
+    for(int dm : supported_decay_modes) {
         for(const auto& entry : histograms) {
             std::ostringstream ss_hist_name;
+	    std::string isUL = "UL";
             // For the vbf ditau trigger, the efficiencies of the 3 prong decay modes are merged.
             if (channel == "ditauvbf" && (dm == 10 || dm == 11))
             {
-                ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm1011_fitted";
+	      ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm1011_fitted";
             }
-            else
+	    
+            else if((isUL.std::string::find(input_file) != std::string::npos) && (dm == 10 || dm == 11)){
+	      ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm1011_fitted";
+	    }
             {
                 ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm" << dm << "_fitted";
             }
@@ -77,14 +76,14 @@ TH1F* SFProvider::LoadHistogram(TFile& file, std::string_view name)
 float SFProvider::FindBinValue(const TH1F& hist, float x, int unc_scale)
 {
     int bin = hist.FindFixBin(x);
-    //bin = std::clamp(bin, 1, hist.GetNbinsX());
+    bin = std::clamp(bin, 1, hist.GetNbinsX());
     return static_cast<float>(hist.GetBinContent(bin) + unc_scale * hist.GetBinError(bin));
 }
 
 int SFProvider::CheckDM(int tau_dm)
 {
     if(tau_dm == 2) tau_dm = 1;
-    if(!comb_decay_modes.count(tau_dm)) {
+    if(!supported_decay_modes.count(tau_dm)) {
         std::ostringstream ss;
         ss << "tau_trigger::SFProvider: decay mode = " << tau_dm << " is not supported.";
         throw std::runtime_error(ss.str());

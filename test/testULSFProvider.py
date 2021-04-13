@@ -10,7 +10,7 @@ for year in [ "2016ULpreVFP","2016ULpostVFP", "2017UL", "2018UL" ]:
             sf_provider = TauTriggerSFProvider(file_name, channel, wp)
 
             for pt in [ 45, 80, 120, 400 ]:
-                for dm in [ 0, 1, 10, 11,1011 ]:
+                for dm in [ 0, 1, 10,11]:
                     for unc_scale in [ -1, 0, 1 ]:
                         eff_data = sf_provider.getEfficiencyData(pt, dm, unc_scale)
                         eff_mc = sf_provider.getEfficiencyMC(pt, dm, unc_scale)

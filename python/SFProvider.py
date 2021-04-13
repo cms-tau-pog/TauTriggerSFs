@@ -4,12 +4,10 @@ class SFProvider:
     supported_decay_modes = [ 0, 1, 10, 11 ]
 
     def __init__(self, input_file, channel, wp):
-        if 'UL' in input_file:
-            SFProvider.supported_decay_modes = [ 0, 1, 10, 11, 1011]
         root_file = ROOT.TFile(input_file, "READ")
         if root_file.IsZombie():
             raise RuntimeError('tau_trigger::SFProvider: unable to open "{}".'.format(input_file))
-
+            
         self.eff_data = {}
         self.eff_mc = {}
         self.sf = {}
@@ -20,7 +18,7 @@ class SFProvider:
                 hist_name = '{}_{}_{}_dm{}_fitted'.format(type_name, channel, wp, dm)
                 # In case of vbf trigger, the efficiencies for the 3 prong decay modes are merged.
                 # Thus, load the merged histogram in both cases.
-                if channel == 'ditauvbf' and dm in [10, 11]:
+                if channel == 'ditauvbf' or 'UL' in input_file and dm in [10, 11]:
                     hist_name = '{}_{}_{}_dm1011_fitted'.format(type_name, channel, wp)
                 hist_dict[dm] = SFProvider._LoadHistogram(root_file, hist_name)
         root_file.Close()

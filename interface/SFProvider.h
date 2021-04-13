@@ -9,7 +9,6 @@ namespace tau_trigger {
 class SFProvider {
 public:
   static const std::set<int> supported_decay_modes;
-  static std::set<int>comb_decay_modes;
     SFProvider(std::string_view input_file, std::string_view channel, std::string_view wp);
 
     float getEfficiencyData(float tau_pt, int tau_dm, int unc_scale = 0) const;
