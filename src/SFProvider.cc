@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <sstream>
 
-#undef SFProvider_cxx
+
 
 namespace tau_trigger {
 
