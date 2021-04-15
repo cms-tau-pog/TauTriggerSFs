@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <sstream>
 
-
-
 namespace tau_trigger {
 
   const std::set<int> SFProvider::supported_decay_modes = { 0, 1, 10, 11};
@@ -20,21 +18,23 @@ SFProvider::SFProvider(std::string_view input_file, std::string_view channel, st
     std::map<std::string, std::map<int, std::unique_ptr<TH1F>>*> histograms = {
         { "data", &eff_data }, { "mc", &eff_mc }, { "sf", &sf }
     };
+            
     for(int dm : supported_decay_modes) {
         for(const auto& entry : histograms) {
-            std::ostringstream ss_hist_name;
+            std::  ostringstream ss_hist_name;
 	    std::string isUL = "UL";
-            // For the vbf ditau trigger, the efficiencies of the 3 prong decay modes are merged.
-            if (channel == "ditauvbf" && (dm == 10 || dm == 11))
+	    // For the vbf ditau trigger, the efficiencies of the 3 prong decay modes are merged.
+            if ((channel == "ditauvbf") && (dm == 10 || dm == 11))
             {
 	      ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm1011_fitted";
             }
-	    
-            else if((isUL.std::string::find(input_file) != std::string::npos) && (dm == 10 || dm == 11)){
+	    // For the UL samples, the efficiencies of the 3 prong decay modes are merged.
+	    else if(input_file.find(isUL) != std::string::npos){
 	      ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm1011_fitted";
 	    }
+            else
             {
-                ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm" << dm << "_fitted";
+	      ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm" << dm << "_fitted";
             }
             (*entry.second)[dm].reset(LoadHistogram(root_file, ss_hist_name.str()));
         }
