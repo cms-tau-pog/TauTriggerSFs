@@ -7,7 +7,7 @@ class SFProvider:
         root_file = ROOT.TFile(input_file, "READ")
         if root_file.IsZombie():
             raise RuntimeError('tau_trigger::SFProvider: unable to open "{}".'.format(input_file))
-            
+
         self.eff_data = {}
         self.eff_mc = {}
         self.sf = {}
