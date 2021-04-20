@@ -19,7 +19,7 @@ int main()
         for(int year : years) {
             std::cout << "Testing tau trigger SF for " << year << std::endl;
             std::ostringstream ss_file_name;
-            ss_file_name << "TauAnalysisTools/TauTriggerSFs/data/" << year << "_tauTriggerEff_DeepTau2017v2p1.root";
+            ss_file_name << std::getenv("CMSSW_BASE") << "/src/TauAnalysisTools/TauTriggerSFs/data/" << year << "_tauTriggerEff_DeepTau2017v2p1.root";
             const std::string file_name = ss_file_name.str();
 
             for(const auto& channel : channels) {
