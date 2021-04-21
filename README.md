@@ -16,40 +16,42 @@ The c++ interface require you to scram b after checkout. If you do not place the
 the python paths are not guaranteed to work.
 
 # Supported Trigger Scale Factors and Measurements
-The tau trigger SFs are provided separately for the different offline DeepTau ID working points. They are provided for the three different recommended trigger combinations in the root files in the data directory of this repository. The recommended triggers are:
+The tau trigger SFs are provided separately for the different offline DeepTau ID working points. They are provided for the three different recommended trigger combinations in the root files in the data directory of this repository.
+The recommended triggers are:
 
-    * Mu+Tau Cross Trigger:
-        * 2016:
-            * HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1
-        * 2017:
-            * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
-        * 2018:
-            * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1,     for Run < 317509
-            * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau**HPS**27_eta2p1_CrossL1,  for 2018 Run >= 317509
-    * Elec+Tau Cross Trigger:
-        * 2016:
-            * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1,    for Run < 276215
-            * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20,             for 276214 < Run < 278270
-            * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30,             for Run > 278269
-        * 2017:
-            * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
-        * 2018:
-            * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1, for Run < 317509
-            * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau**HPS**30_eta2p1_CrossL1,  for Run >= 317509
-    * di-Tau Triggers: OR of all fully enabled triggers in 2017 data for Run < 317509 before HPS tau reconstruction is deployed, and use the single ditau trigger for Run >= 317509 after HPS is deployed
-        *  2016:
-            * HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg,               for 2016 Run B-G
-            * HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg,       for 2016 Run H
-        * 2017:
-            * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
-            * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
-            * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
-        * 2018:
-            * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg, for Run < 317509
-            * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
-            * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
-            * HLT_DoubleMediumChargedIsoPFTau**HPS**35_Trk1_eta2p1_Reg,  for 2018 Run >= 317509
-    
+* Mu+Tau Cross Trigger:
+    * 2016:
+        * HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1
+    * 2017:
+        * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
+    * 2018:
+        * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1,     for Run < 317509
+        * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau**HPS**27_eta2p1_CrossL1,  for Run >= 317509
+
+* Elec+Tau Cross Trigger:
+    * 2016:
+        * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1,    for Run < 276215
+        * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20,             for 276214 < Run < 278270
+        * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30,             for Run > 278269
+    * 2017:
+        * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
+    * 2018:
+        * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1, for Run < 317509
+        * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau**HPS**30_eta2p1_CrossL1,  for Run >= 317509
+
+* di-Tau Triggers: OR of all fully enabled triggers in 2017 data for Run < 317509 before HPS tau reconstruction is deployed, and use the single ditau trigger for Run >= 317509 after HPS is deployed
+    * 2016:
+        * HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg,               for 2016 Run B-G
+        * HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg,       for 2016 Run H
+    * 2017:
+        * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+        * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
+    * 2018:
+        * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg, for Run < 317509
+        * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
+        * HLT_DoubleMediumChargedIsoPFTau**HPS**35_Trk1_eta2p1_Reg,  for Run >= 317509
 
 ## Tau Trigger Scale Factors for Ultra Legacy Simulated Samples
 The tau trigger scale factors for the Ultra Legacy simulated samples can be obtained from the root files `data/{2016ULpreVFP,2016ULpostVFP,2017UL,2018UL}_tauTriggerEff_DeepTau2017v2p1.root` containing the fitted pT dependent scale factors for the trigger combinations detailed above.
@@ -66,13 +68,14 @@ The efficiencies and SFs are measured on the full 2016, 2017 and 2018 data sets 
 Tau trigger SFs for the DeepTau ID in the embedded samples can be derived from the root files containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies{2016,2017,2018}_Embedded_deeptau.root`.
 
 Due to ineffieciencies in the tau reconstruction at the HLT in the embedded samples in 2017 and 2018, the full trigger paths can not be used for these years. Instead the provided efficiencies are measured for previous filters in the HLT chain. Thus, in an analysis using the provided scale factors the used trigger decision should be based on the earlier filters and the match of the corresponding lepton of the cross triggers to the overlap filter must not be performed. The filters used for the matching are:
-    * Mu+Tau Cross Trigger:
-        * hltL1sMu18erTau24erIorMu20erTau24er,    for 2017 and 2018 Run < 317509
-        * hltL1sBigORMu18erTauXXer2p1,            for 2018 Run >= 317509
-    * Elec+Tau Cross Trigger:
-        * hltL1sBigORLooseIsoEGXXerIsoTauYYerdRMin0p3
-    * di-Tau Trigger:
-        * hltDoubleL2IsoTau26eta2p2
+    
+ - Mu+Tau Cross Trigger:
+     - hltL1sMu18erTau24erIorMu20erTau24er,    for 2017 and 2018 Run < 317509
+     - hltL1sBigORMu18erTauXXer2p1,            for 2018 Run >= 317509
+ - Elec+Tau Cross Trigger:
+     - hltL1sBigORLooseIsoEGXXerIsoTauYYerdRMin0p3
+ - di-Tau Trigger:
+     - hltDoubleL2IsoTau26eta2p2
 
 Efficiencies and SF are measured on the full 2016, 2017 and 2018 data sets with 35.9 1/fb, 41.5 1/fb and 59.6 1/fb, respectively, using the SingleMuon datasets of 17July2018 ReReco samples in 2016, 31Mar2018 ReReco samples in 2018 and 17Sep18 ReReco samples from Run2018A to Run2018C and of PromptReco samples for Run2018D. The SFs are provided including the analytic fit and uncertainties per decay mode in November 2019: https://indico.cern.ch/event/864131/contributions/3644102/attachments/1946592/3229746/TauTriggerEfficiencies_Embedded.pdf
 
