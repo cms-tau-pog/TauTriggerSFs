@@ -102,7 +102,7 @@ sf_up = sf_provider.getSF(tau_pt, tau_dm, unc_scale=1)  # 1 sigma up shift
 sf_down = sf_provider.getSF(tau_pt, tau_dm, unc_scale=-1)  # 1 sigma down shift
 ```
 ## Embedded Samples
-The readout of the scale factors for the embedded samples is documented [below](##accessing-the-Efficiencies-and-SFs).
+The readout of the scale factors for the embedded samples is documented [below](#accessing-the-Efficiencies-and-SFs).
 
 # Deprecated instructions
 
