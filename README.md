@@ -39,7 +39,7 @@ The recommended triggers are:
         * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1, for Run < 317509
         * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau**HPS**30_eta2p1_CrossL1,  for Run >= 317509
 
-* di-Tau Triggers: OR of all fully enabled triggers in 2017 data for Run < 317509 before HPS tau reconstruction is deployed, and use the single ditau trigger for Run >= 317509 after HPS is deployed
+* di-Tau Triggers:
     * 2016:
         * HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg,               for 2016 Run B-G
         * HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg,       for 2016 Run H
