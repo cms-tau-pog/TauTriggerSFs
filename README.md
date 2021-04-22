@@ -19,7 +19,7 @@ the python paths are not guaranteed to work.
 The tau trigger SFs are provided separately for the different offline DeepTau ID working points. They are provided for the three different recommended trigger combinations in the root files in the data directory of this repository.
 The recommended triggers are:
 
-* Mu+Tau Cross Trigger:
+* Muon+Tau Cross Trigger:
     * 2016:
         * HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1
     * 2017:
@@ -67,12 +67,12 @@ The efficiencies and SFs are measured on the full 2016, 2017 and 2018 data sets 
 
 Tau trigger SFs for the DeepTau ID in the embedded samples can be derived from the root files containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies{2016,2017,2018}_Embedded_deeptau.root`.
 
-Due to ineffieciencies in the tau reconstruction at the HLT in the embedded samples in 2017 and 2018, the full trigger paths can not be used for these years. Instead the provided efficiencies are measured for previous filters in the HLT chain. Thus, in an analysis using the provided scale factors the used trigger decision should be based on the earlier filters and the match of the corresponding lepton of the cross triggers to the overlap filter must not be performed. The filters used for the matching are:
+Due to inefficiencies in the tau reconstruction at the HLT in the embedded samples in 2017 and 2018, the full trigger paths can not be used for these years. Instead the provided efficiencies are measured for previous filters in the HLT chain. Thus, in an analysis using the provided scale factors the used trigger decision should be based on the earlier filters and the match of the corresponding lepton of the cross triggers to the overlap filter must not be performed. The filters used for the matching are:
     
- - Mu+Tau Cross Trigger:
+ - Muon+Tau Cross Trigger:
      - hltL1sMu18erTau24erIorMu20erTau24er,    for 2017 and 2018 Run < 317509
      - hltL1sBigORMu18erTauXXer2p1,            for 2018 Run >= 317509
- - Elec+Tau Cross Trigger:
+ - Electron+Tau Cross Trigger:
      - hltL1sBigORLooseIsoEGXXerIsoTauYYerdRMin0p3
  - di-Tau Trigger:
      - hltDoubleL2IsoTau26eta2p2
