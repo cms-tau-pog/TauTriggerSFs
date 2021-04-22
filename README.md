@@ -28,7 +28,7 @@ The recommended triggers are:
         * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1,     for Run < 317509
         * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau**HPS**27_eta2p1_CrossL1,  for Run >= 317509
 
-* Elec+Tau Cross Trigger:
+* Electron+Tau Cross Trigger:
     * 2016:
         * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1,    for Run < 276215
         * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20,             for 276214 < Run < 278270
