@@ -1,3 +1,7 @@
+# Tau Trigger Scale Factors for Run2 Samples
+
+This repository provides access to the tau trigger scale factors measured for all data-taking periods of LHC Run2. The scale factors are provided for data, simulated and embedded samples. In case of the simulated samples, the scale factors are provided for the Legacy and Ultra Legacy reconstruction campaigns separately. For the embedded samples, the scale factors are currently provided in a different format and only for the Legacy reconstruction campaign. The instructions how to extract the scale factors in both cases are detailed below.
+
 # Checkout Instructions
 
 For the current tau trigger scale factors for 2018, 2017 data and MC do:
@@ -11,8 +15,101 @@ scram b -j 8
 The c++ interface require you to scram b after checkout. If you do not place the code in the above hierarchy within CMSSW
 the python paths are not guaranteed to work.
 
+# Supported Trigger Scale Factors and Measurements
+The tau trigger SFs are provided separately for the different offline DeepTau ID working points. They are provided for the three different recommended trigger combinations in the root files in the data directory of this repository.
+The recommended triggers are:
 
-# Tau Trigger Scale Factor Tool for 2018 Data & MC
+* Muon+Tau Cross Trigger:
+    * 2016:
+        * HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1
+    * 2017:
+        * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1
+    * 2018:
+        * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1,     for Run < 317509
+        * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau**HPS**27_eta2p1_CrossL1,  for Run >= 317509
+
+* Electron+Tau Cross Trigger:
+    * 2016:
+        * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1,    for Run < 276215
+        * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20,             for 276214 < Run < 278270
+        * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30,             for Run > 278269
+    * 2017:
+        * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1
+    * 2018:
+        * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1, for Run < 317509
+        * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau**HPS**30_eta2p1_CrossL1,  for Run >= 317509
+
+* di-Tau Triggers:
+    * 2016:
+        * HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg,               for 2016 Run B-G
+        * HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg,       for 2016 Run H
+    * 2017: The scale factors are provided for the OR of all three fully enabled triggers in 2017 data listed below.
+        * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+        * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
+    * 2018: The scale factors are provided for the OR of all three fully enabled triggers in 2018 data for Run < 317509 before the HPS tau reconstruction was deployed as listed below. For Run >= 317509 after the deployment of the HPS reconstruction the scale factors are provided for the single ditau trigger using the HPS reconstruction.
+        * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg, for Run < 317509
+        * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
+        * HLT_DoubleMediumChargedIsoPFTau**HPS**35_Trk1_eta2p1_Reg,  for Run >= 317509
+
+## Tau Trigger Scale Factors for Ultra Legacy Simulated Samples
+The tau trigger scale factors for the Ultra Legacy simulated samples can be obtained from the root files `data/{2016ULpreVFP,2016ULpostVFP,2017UL,2018UL}_tauTriggerEff_DeepTau2017v2p1.root` containing the fitted pT dependent scale factors for the trigger combinations detailed above.
+
+The efficiencies and SFs are measured on the full 2016, 2017 and 2018 data sets with 35.9 1/fb, 41.5 1/fb and 59.6 1/fb, respectively, using the SingleMuon datasets of 21Feb2020 UL ReReco samples in 2016, 09Aug2019 UL ReReco samples in 2017 and 12Nov2019 UL ReReco samples in 2018. The SFs are provided including the non-parametric fit and uncertainties per decay mode as presented in March 2021: https://indico.cern.ch/event/1015397/contributions/4262184/attachments/2203434/3727614/TautriggerSF-UL.pdf, https://indico.cern.ch/event/1022605/contributions/4292954/attachments/2217652/3754707/TautriggerSF_UL_updatedv2.pdf
+
+## Tau Trigger Scale Factors for Legacy Simulated Samples
+The tau trigger scale factors for the Ultra Legacy simulated samples can be obtained from the root files `data/{2016,2017,2018}_tauTriggerEff_DeepTau2017v2p1.root` containing the fitted pT dependent scale factors for the trigger combinations detailed above.
+
+The efficiencies and SFs are measured on the full 2016, 2017 and 2018 data sets with 35.9 1/fb, 41.5 1/fb and 59.6 1/fb, respectively, using the SingleMuon datasets of 17July2018 ReReco samples in 2016, 31Mar2018 ReReco samples in 2018 and 17Sep18 ReReco samples from Run2018A to Run2018C and of PromptReco samples for Run2018D. The SFs are provided including the non-parametric fit and uncertainties per decay mode as presented in December 2019: https://indico.cern.ch/event/868279/#21-preliminary-tau-trigger-sca.
+
+## Tau Trigger Scale Factors for Legacy Embedded Samples
+
+Tau trigger SFs for the DeepTau ID in the embedded samples can be derived from the root files containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies{2016,2017,2018}_Embedded_deeptau.root`.
+
+Due to inefficiencies in the tau reconstruction at the HLT in the embedded samples in 2017 and 2018, the full trigger paths can not be used for these years. Instead the provided efficiencies are measured for previous filters in the HLT chain. Thus, in an analysis using the provided scale factors the used trigger decision should be based on the earlier filters and the match of the corresponding lepton of the cross triggers to the overlap filter must not be performed. The filters used for the matching are:
+    
+ - Muon+Tau Cross Trigger:
+     - hltL1sMu18erTau24erIorMu20erTau24er,    for 2017 and 2018 Run < 317509
+     - hltL1sBigORMu18erTauXXer2p1,            for 2018 Run >= 317509
+ - Electron+Tau Cross Trigger:
+     - hltL1sBigORLooseIsoEGXXerIsoTauYYerdRMin0p3
+ - di-Tau Trigger:
+     - hltDoubleL2IsoTau26eta2p2
+
+Efficiencies and SF are measured on the full 2016, 2017 and 2018 data sets with 35.9 1/fb, 41.5 1/fb and 59.6 1/fb, respectively, using the SingleMuon datasets of 17July2018 ReReco samples in 2016, 31Mar2018 ReReco samples in 2018 and 17Sep18 ReReco samples from Run2018A to Run2018C and of PromptReco samples for Run2018D. The SFs are provided including the analytic fit and uncertainties per decay mode in November 2019: https://indico.cern.ch/event/864131/contributions/3644102/attachments/1946592/3229746/TauTriggerEfficiencies_Embedded.pdf
+
+# Readout of the Tau Trigger Scale Factors
+## Simulated Samples
+The scale factors for the simulated samples can be accesed using the helper class `SFProvider` which is implented in as python or C++ class with the same interface. The parameters that need to be passed when constructing an instance of the `SFProvider` class are:
+* the file name of the root file the scale factors should be read from
+* the trigger the scale factor should be obtained for (`mutau`, `etau` or `ditau`)
+* the working point of the DeepTau ID the scale factor should be read for (choose from `VVVLoose` to `VVTight`).
+
+The scale factors, efficiencies and their uncertainties can then be obtained from the methods `getEfficiencyData`, `getEfficiencyMC` and `getSF`. The arguments for the method calls are the transverse momentum of the tau lepton, the decay mode of the taulepton and the desired uncertainty scale.
+A code example is provided below:
+```python
+from TauAnalysisTools.TauTriggerSFs.SFProvider import SFProvider
+
+sf_provider = SFProvider("data/2017UL_tauTriggerEff_DeepTau2017v2p1.root", "ditau", "Medium")
+
+tau_pt = 48.
+tau_dm = 1
+
+# Get data efficiency.
+eff_data = sf_provider.getEfficiencyData(tau_pt, tau_dm, unc_scale=0)
+eff_mc = sf_provider.getEfficiencyMC(tau_pt, tau_dm, unc_scale=0)
+
+# Get uncertainty of scale factor
+sf_up = sf_provider.getSF(tau_pt, tau_dm, unc_scale=1)  # 1 sigma up shift
+sf_down = sf_provider.getSF(tau_pt, tau_dm, unc_scale=-1)  # 1 sigma down shift
+```
+## Embedded Samples
+The readout of the scale factors for the embedded samples is documented [below](#accessing-the-Efficiencies-and-SFs).
+
+# Deprecated instructions
+
+## Tau Trigger Scale Factor Tool for 2018 Data & MC
 
 Tau trigger SFs can be derived from the root file containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies2018.root` :
    * Mu+Tau Cross Trigger:
@@ -31,8 +128,7 @@ Tau trigger SFs can be derived from the root file containing the pT dependent ef
 
 Efficiencies and SF are measured on Full 2018 Data with 59.6 1/fb using SingleMuon dataset of 17Sep18 ReReco samples from RunA to RunC and of PromptReco samples for RunD. The 2018 SFs are provided including the analytic fit and uncertainties per decay mode in May 2019: https://indico.cern.ch/event/820066/contributions/3430600/attachments/1843348/3023303/TauTrigger2018SF_tauIDMeeting_hsert.pdf
 
-
-# Tau Trigger Scale Factor Tool for 2017 Data & MC
+## Tau Trigger Scale Factor Tool for 2017 Data & MC
 
 Tau trigger SFs can be derived from the root file containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies2017.root` :
    * Mu+Tau Cross Trigger:
@@ -50,49 +146,14 @@ Updated MCv2 uncertainties with MVAv2 presented in August 2018: https://indico.c
 
 *Most Current Results* Updated SFs are provided including the analytic fit and uncertainties February 2019: https://indico.cern.ch/event/799374/contributions/3323191/attachments/1797874/2931826/TauTrigger2017SFv3_TauID_hsert.pdf
 
-# Tau Trigger Scale Factor Tool for Embedded 2016 & 2017 & 2018
-
-Tau trigger SFs for the DeepTau ID in the embedded samples can be derived from the root files containing the pT dependent efficiency curves for the 3 provided trigger combinations `data/tauTriggerEfficiencies{2016,2017,2018}_Embedded_deeptau.root` :
-   * Mu+Tau Cross Trigger:
-      * HLT_IsoMu19_eta2p1_LooseIsoPFTau20_SingleL1,    for 2016
-      * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau27_eta2p1_CrossL1,   for 2017 and 2018 Run < 317509
-      * HLT_IsoMu20_eta2p1_LooseChargedIsoPFTau**HPS**27_eta2p1_CrossL1,  for 2018 Run >= 317509
-
-   * Elec+Tau Cross Trigger:
-      * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1,    for 2016 Run < 276215
-      * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau20,             for 2016 276214 < Run < 278270
-      * HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30,             for 2016 Run > 278269
-      * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau30_eta2p1_CrossL1, for 2017 and 2018 Run < 317509
-      * HLT_Ele24_eta2p1_WPTight_Gsf_LooseChargedIsoPFTau**HPS**30_eta2p1_CrossL1,  for 2018 Run >= 317509
-
-   * di-Tau Triggers: OR of all fully enabled triggers in 2017 data for Run < 317509 before HPS tau reconstruction is deployed, and use the single ditau trigger for Run >= 317509 after HPS is deployed
-      * HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg,               for 2016 Run B-G
-      * HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg,       for 2016 Run H
-      * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg, for 2017 and 2018 Run < 317509
-      * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
-      * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
-      * HLT_DoubleMediumChargedIsoPFTau**HPS**35_Trk1_eta2p1_Reg,  for 2018 Run >= 317509
-
-Due to ineffieciencies in the tau reconstruction at the HLT in the embedded samples in 2017 and 2018, the full trigger paths can not be used for these years. Instead the provided efficiencies are measured for previous filters in the HLT chain. Thus, in an analysis using the provided scale factors the used trigger decision should be based on the earlier filters and the match of the corresponding lepton of the cross triggers to the overlap filter must not be performed. The filters used for the matching are:
-    * Mu+Tau Cross Trigger:
-        * hltL1sMu18erTau24erIorMu20erTau24er,    for 2017 and 2018 Run < 317509
-        * hltL1sBigORMu18erTauXXer2p1,            for 2018 Run >= 317509
-    * Elec+Tau Cross Trigger:
-        * hltL1sBigORLooseIsoEGXXerIsoTauYYerdRMin0p3
-    * di-Tau Trigger:
-        * hltDoubleL2IsoTau26eta2p2
-
-Efficiencies and SF are measured on the full 2016, 2017 and 2018 data sets with 35.9 1/fb, 41.5 1/fb and 59.6 1/fb, respectively, using the SingleMuon datasets of 17July2018 ReReco samples in 2016, 31Mar2018 ReReco samples in 2018 and 17Sep18 ReReco samples from Run2018A to Run2018C and of PromptReco samples for Run2018D. The SFs are provided including the analytic fit and uncertainties per decay mode in November 2019: https://indico.cern.ch/event/864131/contributions/3644102/attachments/1946592/3229746/TauTriggerEfficiencies_Embedded.pdf
-
-
-# Trigger Efficiency / SF Fit and Uncertainties
+## Trigger Efficiency / SF Fit and Uncertainties
 
 Starting with the 2017 dataset, we are attempting to provide trigger efficiency uncertainties based on the results of the analytic fit of the TGraphAsymmErrors. The fit function is a modified CrystalBall CDF: `fit = ROOT.TF1('fit', '[5] - ROOT::Math::crystalball_cdf(-x, [0], [1], [2], [3])*([4])')`. 
 The uncertainties are aimed to provide we well motivated description of the trigger efficiency uncertainty. We have not tested the results of this method against the previous standard method which was applying a flat log-normal uncertainty in an analysis workflow. The fit uncertainties tend to lead to larger relative uncertainty in the trigger turn-on region and smaller relative uncertainties in the plateau region.
 
 Application of the efficiency and SF uncertainties should be considered _EXPERIMENTAL_ at the moment. We are curious to hear feedback.
 
-# Accessing the Efficiencies and SFs
+## Accessing the Efficiencies and SFs
 
 A helper class, `getTauTriggerSFs`, in `python/getTauTriggerSFs.py` can be used. It should be initialized with:
    * the desired trigger: `ditau`, `mutau`, `etau`
@@ -134,7 +195,7 @@ In 2017, in additional to the barrel / end cap separation, we isolate a specific
 
 In 2018, in additional to the barrel / end cap separation, we isolate a specific region in the endcap which had well known issues with broken HCAL modules ((-2.1 < tauEta < -1.5) && (-1.6 < tauPhi < -0.8). The eta-phi adjustements are provided in as TH2s in the main root file `data/data/tauTriggerEfficiencies2018.root` and are applied by default in `getTauTriggerSFs`.
 
-# Example Code
+## Example Code
 For analysis using Tau MVAv2 dR0p5 ID using Tight WP:
 ```
 from TauAnalysisTools.TauTriggerSFs.getTauTriggerSFs import getTauTriggerSFs
@@ -145,12 +206,12 @@ sf_up      = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(),
 sf_down    = tauSFs.getTriggerScaleFactorUncert( tau.pt(), tau.eta(), tau.phi(), tau.decayMode(), 'Down' ) )
 ```
 
-# For Detailed Trigger Uncertainty Studies
+## For Detailed Trigger Uncertainty Studies
 
 Please contact the Tau POG trigger experts who can help point you towards the original NTuples used to make the fits and TGraphAsymmErrors distributions.
 
 
-# For use with C++ interface
+## For use with C++ interface
 
 Thank you to Christian Veelken and Artur Gottmann who have both contributed here.  
 The C++ interface requires you to have the proper directory structure from the initial checkout instructions.  
