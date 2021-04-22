@@ -43,11 +43,11 @@ The recommended triggers are:
     * 2016:
         * HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg,               for 2016 Run B-G
         * HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg,       for 2016 Run H
-    * 2017:
+    * 2017: The scale factors are provided for the OR of all three fully enabled triggers in 2017 data listed below.
         * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
         * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
         * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
-    * 2018:
+    * 2018: The scale factors are provided for the OR of all three fully enabled triggers in 2018 data for Run < 317509 before the HPS tau reconstruction was deployed as listed below. For Run >= 317509 after the deployment of the HPS reconstruction the scale factors are provided for the single ditau trigger using the HPS reconstruction.
         * HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg, for Run < 317509
         * HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
         * HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
