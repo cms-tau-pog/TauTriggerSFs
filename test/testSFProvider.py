@@ -5,9 +5,9 @@ for year in [ 2016, 2017, 2018 ]:
     file_name = 'TauAnalysisTools/TauTriggerSFs/data/{}_tauTriggerEff_DeepTau2017v2p1.root'.format(year)
 
     if year == 2016:
-        channel_list = [ 'ditau', 'mutau', 'etau']
+        channel_list = [ 'ditau', 'mutau', 'etau', 'ditaucond']
     elif year == 2017:
-        channel_list = [ 'ditau', 'mutau', 'etau', 'ditauvbf']
+        channel_list = [ 'ditau', 'mutau', 'etau', 'ditauvbf', 'ditaucond']
     else:
         channel_list = [ 'ditau', 'mutau', 'etau', 'ditauvbf', 'ditaucond']
 

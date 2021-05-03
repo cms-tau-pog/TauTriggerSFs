@@ -23,7 +23,7 @@ int main()
             const std::string file_name = ss_file_name.str();
 
             for(const auto& channel : channels) {
-                if ((year == 2016 && channel == "ditauvbf") || (year != 2018 && channel == "ditaucond"))
+                if (year == 2016 && channel == "ditauvbf")
                 {
                     continue;
                 }
