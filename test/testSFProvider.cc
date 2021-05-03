@@ -28,6 +28,7 @@ int main()
                     continue;
                 }
                 for(const auto& wp : working_points) {
+                    if (year == 2017 and channel == "ditaucond" and wp == "VVTight") continue;
                     const tau_trigger::SFProvider sf_provider(file_name, channel, wp);
                     for(float pt : test_pts) {
                         for(int dm : decay_modes) {
