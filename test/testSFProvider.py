@@ -1,12 +1,18 @@
 from TauAnalysisTools.TauTriggerSFs.SFProvider import SFProvider as TauTriggerSFProvider
 
+channel_lists = {
+    2016 : [ 'ditau', 'mutau', 'etau', 'ditaucond'],
+    2017 : [ 'ditau', 'mutau', 'etau', 'ditauvbf', 'ditaucond'],
+    2018 : [ 'ditau', 'mutau', 'etau', 'ditauvbf', 'ditaucond'],
+}
+
 for year in [ 2016, 2017, 2018 ]:
     print("Testing tau trigger SF for {}".format(year))
     file_name = 'TauAnalysisTools/TauTriggerSFs/data/{}_tauTriggerEff_DeepTau2017v2p1.root'.format(year)
 
-    channel_list = [ 'ditau', 'mutau', 'etau'] if year == 2016 else [ 'ditau', 'mutau', 'etau', 'ditauvbf']
-    for channel in channel_list:
+    for channel in channel_lists[year]:
         for wp in [ 'VVVLoose', 'VVLoose', 'VLoose', 'Loose', 'Medium', 'Tight', 'VTight', 'VVTight' ]:
+            if channel == 'ditaucond' and year == 2017 and wp == 'VVTight': continue
             sf_provider = TauTriggerSFProvider(file_name, channel, wp)
 
             for pt in [ 45, 80, 120, 400 ]:

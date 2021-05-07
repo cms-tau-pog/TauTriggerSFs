@@ -26,7 +26,7 @@ SFProvider::SFProvider(std::string_view input_file, std::string_view channel, st
             std::ostringstream ss_hist_name;
             std::string isUL = "UL";
             // For the vbf ditau trigger, the efficiencies of the 3 prong decay modes are merged.
-            if ((channel == "ditauvbf") && (dm == 10 || dm == 11))
+            if ((channel == "ditauvbf" || channel == "ditaucond") && (dm == 10 || dm == 11))
             {
                 ss_hist_name << entry.first << "_" << channel << "_" << wp << "_dm1011_fitted";
             }

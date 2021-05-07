@@ -6,7 +6,7 @@
 int main()
 {
     static const std::vector<int> years = { 2016, 2017, 2018 };
-    static const std::vector<std::string> channels = { "ditau", "mutau", "etau", "ditauvbf"};
+    static const std::vector<std::string> channels = { "ditau", "mutau", "etau", "ditauvbf", "ditaucond"};
     static const std::vector<std::string> working_points = {
         "VVVLoose", "VVLoose", "VLoose", "Loose", "Medium", "Tight", "VTight", "VVTight"
     };
@@ -28,6 +28,7 @@ int main()
                     continue;
                 }
                 for(const auto& wp : working_points) {
+                    if (year == 2017 and channel == "ditaucond" and wp == "VVTight") continue;
                     const tau_trigger::SFProvider sf_provider(file_name, channel, wp);
                     for(float pt : test_pts) {
                         for(int dm : decay_modes) {
