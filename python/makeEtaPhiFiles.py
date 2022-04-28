@@ -17,10 +17,10 @@ year2016 = True
 # "PixelProblemBarrel" : 0.3589
 
 def fillH2( trigger, wp, dm, sample, info_map, h2 ) :
-    print "Filling: ",h2
+    print("Filling: ", h2)
     for x in range( 1, h2.GetXaxis().GetNbins()+1 ) :
         for y in range( 1, h2.GetYaxis().GetNbins()+1 ) :
-            #print x,y
+            #print(x, y)
             if x == 1 or x == 6 : # beyond eta range, abs(eta)>2.1
                 h2.SetBinContent( x, y, 0.0 )
             elif x == 2 or x == 5 : # end cap, 1.5<abs(eta)<2.1
@@ -30,13 +30,13 @@ def fillH2( trigger, wp, dm, sample, info_map, h2 ) :
             elif x == 4 and y == 2 : # barrel pixel probel region
                 h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "PixelProblemBarrel" ] )
             else :
-                print "Didn't we cover all the values?",x,y
+                print("Didn't we cover all the values?", x, y)
 
 def fillH2_2018( trigger, wp, dm, sample, info_map, h2 ) :
-    print "Filling: ",h2
+    print("Filling: ", h2)
     for x in range( 1, h2.GetXaxis().GetNbins()+1 ) :
         for y in range( 1, h2.GetYaxis().GetNbins()+1 ) :
-            #print x,y
+            #print(x, y)
             if x == 1 or x == 6 : # beyond eta range, abs(eta)>2.1
                 h2.SetBinContent( x, y, 0.0 )
             elif x == 2  and y == 2 : # end cap, broken HCAL modules region, 1.5< eta <2.1 and -1.6 < phi< -0.8
@@ -46,10 +46,10 @@ def fillH2_2018( trigger, wp, dm, sample, info_map, h2 ) :
             elif x == 3 or x == 4 : # barrel
                 h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "Barrel" ] )
             else :
-                print "Didn't we cover all the values?",x,y
+                print("Didn't we cover all the values?", x, y)
 
 def fillH2_2016( trigger, wp, dm, sample, info_map, h2 ) :
-    print "Filling: ",h2
+    print("Filling: ", h2)
     for x in range( 1, h2.GetXaxis().GetNbins()+1 ) :
         for y in range( 1, h2.GetYaxis().GetNbins()+1 ) :
             if x == 1 or x == 3 : # beyond eta range, abs(eta)>2.1
@@ -57,20 +57,20 @@ def fillH2_2016( trigger, wp, dm, sample, info_map, h2 ) :
             elif x == 2 : # the rest of the eta phi region, no eta phi separation applied for 2016
                 h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "Average" ] )
             else :
-                print "Didn't we cover all the values?",x,y
+                print("Didn't we cover all the values?", x, y)
 
         
 def fillAvgH2( trigger, wp, dm, sample, info_map, h2 ) :
-    print "Filling: ",h2
+    print("Filling: ", h2)
     for x in range( 1, h2.GetXaxis().GetNbins()+1 ) :
         for y in range( 1, h2.GetYaxis().GetNbins()+1 ) :
-            #print x,y
+            #print(x, y)
             if x == 1 or x == 3 : # beyond eta range, abs(eta)>2.1
                 h2.SetBinContent( x, y, 0.0 )
             elif x == 2 : # abs(eta)<2.1
                 h2.SetBinContent( x, y, info_map[ trigger ][ sample ][ wp ][ dm ][ "Average" ] )
             else :
-                print "Didn't we cover all the values?",x,y
+                print("Didn't we cover all the values?", x, y)
 
 
 if(year2017):
@@ -84,7 +84,7 @@ elif(year2016):
                 info_map = json.load( etaPhiInfo )
 
 
-print "Making Eta Phi Map"
+print("Making Eta Phi Map")
 #saveDir = '/afs/cern.ch/user/t/truggles/www/tau_fits_Feb13v2/'
 #c = ROOT.TCanvas( 'c1', 'c1', 600, 600 ) 
 #p = ROOT.TPad( 'p1', 'p1', 0, 0, 1, 1 )
@@ -117,7 +117,7 @@ yBinningAvg = array('f', [-3.2, 3.2] )
 for trigger in ['ditau', 'etau', 'mutau'] :
     for wp in ['vvloose', 'vloose', 'loose', 'medium', 'tight', 'vtight', 'vvtight' ] :
         for dm in ['dm0', 'dm1', 'dm10', 'dmCmb'] :
-            print trigger, wp, dm
+            print(trigger, wp, dm)
             h_data = ROOT.TH2F( '%s_%sMVAv2_%s_DATA' % (trigger, wp, dm), '%s_%sMVAv2_%s_DATA;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
             h_mc = ROOT.TH2F( '%s_%sMVAv2_%s_MC' % (trigger, wp, dm), '%s_%sMVAv2_%s_MC;#tau #eta;#tau #phi;Efficiency' % (trigger, wp, dm), len(xBinning)-1, xBinning, len(yBinning)-1, yBinning) 
 
