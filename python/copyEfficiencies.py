@@ -15,7 +15,7 @@ year2017 = False
 year2018 = False
 year2016 = True
 
-print "Making initial SF file"
+print("Making initial SF file")
 
 if(year2017):
 	iFile = ROOT.TFile( '/afs/cern.ch/user/h/hsert/public/Fall17Samples_31MarData_12AprMC/tauTriggerEfficiencies2017_final_perDM_v3.root', 'r' )
@@ -39,12 +39,12 @@ for trigger in ['ditau', 'mutau', 'etau'] :
                 iName2017 = trigger+'_XXX_'+dm+'_'+wp+'TauMVA_'+sample
                 iName2018 = trigger+'_XXX_'+wp+'TauMVA_'+dm+'_'+sample
                 iNameSF = trigger+'_XXX_'+wp+'TauMVA_'+dm
-                print iName2018
+                print(iName2018)
                 if(year2017): iName = iName2017
                 elif(year2018 or year2016): iName = iName2018
                 saveName = trigger+'_'+wp+'MVAv2_'+dm+'_'+sample
                 saveNameSF = trigger+'_'+wp+'MVAv2_'+dm
-                print saveName
+                print(saveName)
                 g = getGraph( iFile, iName.replace('XXX','gEffiFit'), saveName+'_graph' )
                 #hFit = getHist( iFile, iName.replace('XXX','hEffiFit'), saveName+'_Fithisto' )
                 #hCoarse = getHist( iFile, iName.replace('XXX','hEffiCoarse'), saveName+'_CoarseBinhisto' )

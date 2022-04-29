@@ -32,7 +32,7 @@ class getTauTriggerSFs :
         assert( (self.wpType == 'MVAv2' and not self.provide_emb_sfs)
                 or (self.wpType == 'DeepTau' and self.provide_emb_sfs) ), "Tau POG is currently only providing MC efficiencies for MVAv2 and embedded efficiencies for DeepTau, sorry."
         assert( self.year in [2016, 2017, 2018] ), "Choose which year trigger efficiencies you need."
-        print "Loading Efficiencies for trigger %s usingTau %s ID WP %s for year %i based on %s samples" % (self.trigger, self.wpType, self.tauWP, self.year, "embedded" if self.provide_emb_sfs else "simulated")
+        print("Loading Efficiencies for trigger %s usingTau %s ID WP %s for year %i based on %s samples" % (self.trigger, self.wpType, self.tauWP, self.year, "embedded" if self.provide_emb_sfs else "simulated"))
 
         # Assume this is in CMSSW with the below path structure
         if file_name is None:
@@ -134,8 +134,8 @@ class getTauTriggerSFs :
         etaPhiVal = etaPhiHist.GetBinContent( etaPhiHist.FindBin( eta, phi ) )
         etaPhiAvg = etaPhiAvgHist.GetBinContent( etaPhiAvgHist.FindBin( eta, phi ) )
         if etaPhiAvg <= 0.0 :
-            print "One of the provided tau (eta, phi) values (%3.3f, %3.3f) is outside the boundary of triggering taus" % (eta, phi)
-            print "Returning efficiency = 0.0"
+            print("One of the provided tau (eta, phi) values (%3.3f, %3.3f) is outside the boundary of triggering taus" % (eta, phi))
+            print("Returning efficiency = 0.0")
             return 0.0
 
         eff *= etaPhiVal / etaPhiAvg
@@ -203,9 +203,9 @@ class getTauTriggerSFs :
         effData = self.getTriggerEfficiencyData( pt, eta, phi, dm )
         effMC = self.getTriggerEfficiencyMC( pt, eta, phi, dm )
         if effMC < 1e-5 :
-            print "Eff MC is suspiciously low. Please contact Tau POG."
-            print " - %s Trigger SF for Tau ID: %s   WP: %s   pT: %f   eta: %s   phi: %f" % (self.trigger, self.wpType, self.tauWP, pt, eta, phi)
-            print " - MC Efficiency = %f" % effMC
+            print("Eff MC is suspiciously low. Please contact Tau POG.")
+            print(" - %s Trigger SF for Tau ID: %s   WP: %s   pT: %f   eta: %s   phi: %f" % (self.trigger, self.wpType, self.tauWP, pt, eta, phi))
+            print(" - MC Efficiency = %f" % effMC)
             return 0.0
 
         if(self.year == 2016):
@@ -216,7 +216,7 @@ class getTauTriggerSFs :
                 if(effMC!=0): sf = effData / effMC
                 else:
                     sf = 0
-                    print "The efficiency is zero in either Data or MC histogram, so SF is set to zero"
+                    print("The efficiency is zero in either Data or MC histogram, so SF is set to zero")
             else:
                 sf = self.getBinnedScaleFactor(pt, dm, self.binnedSFMap[ dm])
 
@@ -224,7 +224,7 @@ class getTauTriggerSFs :
             if(effData!=0 and effMC!=0): sf = effData / effMC
             else:
                 sf = 0
-                print "The efficiency is zero in either Data or MC histogram, so SF is set to zero"
+                print("The efficiency is zero in either Data or MC histogram, so SF is set to zero")
 
         return sf
 
